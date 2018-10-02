@@ -24,6 +24,15 @@ import xhj.cn.start.controller.TestController;
 
 public class MainVerticle extends AbstractVerticle {
 
+	protected Map<String, Controller> ctrlMap;
+
+	public void init() {
+		ctrlMap = new HashMap<>();
+
+		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
+
+	}
+
 	public static void main(String[] args) {
 		Vertx vertx = Vertx.vertx();
 		vertx.deployVerticle(new MainVerticle());
@@ -79,7 +88,7 @@ public class MainVerticle extends AbstractVerticle {
 
 		resp.putHeader("content-type", "application/json;charset=UTF-8");
 		resp.putHeader("Access-Control-Allow-Origin", "*");
-		exec(req, resp);
+		exec(context, req, resp);
 		resp.end();
 	}
 
@@ -91,23 +100,8 @@ public class MainVerticle extends AbstractVerticle {
 
 		resp.putHeader("content-type", "application/json;charset=UTF-8");
 		resp.putHeader("Access-Control-Allow-Origin", "*");// 设置跨域，目前不限制。TODO，将来需要设定指定的来源
-		exec(req, resp);
+		exec(context, req, resp);
 		resp.end();
-	}
-
-	protected Map<String, Controller> ctrlMap;
-
-	public void init() {
-		ctrlMap = new HashMap<>();
-
-		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
-		// putCtrlInMap(ctrlMap, ContentController.getInstance("content"));
-		// putCtrlInMap(ctrlMap, ContentSetController.getInstance("contentSet"));
-		//
-		// putCtrlInMap(ctrlMap, UserController.getInstance("user"));
-		//
-		// putCtrlInMap(ctrlMap, MediaController.getInstance("media"));
-
 	}
 
 	@SuppressWarnings("unused")
@@ -122,7 +116,7 @@ public class MainVerticle extends AbstractVerticle {
 		resp.write(content, CodecUtils.ENCODING_UTF8);
 	}
 
-	private void exec(HttpServerRequest req, HttpServerResponse resp) {
+	private void exec(RoutingContext context, HttpServerRequest req, HttpServerResponse resp) {
 		String requestURI = req.path();
 
 		System.out.println(req.method());
@@ -139,7 +133,7 @@ public class MainVerticle extends AbstractVerticle {
 				Controller ctrl = ctrlMap.get(node);
 				if (null != ctrl) {
 					try {
-						ctrl.exec(nodes, req, resp);
+						ctrl.exec(nodes, context, req, resp);
 					} catch (Exception e) {
 						writeThings(resp, e.getMessage());
 					}
