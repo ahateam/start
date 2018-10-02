@@ -37,7 +37,7 @@ public class TestController extends Controller {
 		return APIResponse.getNewSuccessResp("success1");
 	}
 
-	@doGet(paths = "test2")
+	@doCall(paths = "test2")
 	public APIResponse test2(APIRequest req) throws Exception {
 		System.out.println("test2");
 		JSONObject c = Param.getReqContent(req);

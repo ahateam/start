@@ -20,38 +20,14 @@ import cn.topoints.utils.CodecUtils;
 import cn.topoints.utils.api.BaseRC;
 import cn.topoints.utils.api.RC;
 import cn.topoints.utils.api.ServerException;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.ext.web.RoutingContext;
 
 public abstract class Controller {
 
 	private static Logger log = LoggerFactory.getLogger(Controller.class);
-
-	/**
-	 * HTTP GET方法
-	 */
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	protected @interface doGet {
-		public String[] paths();
-
-		// 默认所有的GET方法都不需要验证
-		public boolean verify() default false;
-	}
-
-	/**
-	 * HTTP POST方法
-	 */
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	protected @interface doPost {
-		public String[] paths();
-
-		// 默认所有的POST方法都不需要验证
-		public boolean verify() default false;
-	}
 
 	/**
 	 * API方法
@@ -106,46 +82,7 @@ public abstract class Controller {
 					continue;
 				}
 			}
-			// 识别GET
-			{
-				doGet getMethod = m.getAnnotation(doGet.class);
-				if (null != getMethod) {
-					String[] paths = getMethod.paths();
-					if (null == paths || paths.length < 1) {
-						log.info(">>>Method add nothing");
-					} else {
-						for (String path : paths) {
-							if (getMethods.containsKey(path)) {
-								// 如果要添加的path，已经被暂用，则将此方法列入警告
-								warningMethods.put(path, m);
-							} else {
-								getMethods.put(path, new Object[] { m, getMethod.verify() });
-							}
-						}
-					}
-					continue;
-				}
-			}
-			// 识别POST
-			{
-				doPost postMethod = m.getAnnotation(doPost.class);
-				if (null != postMethod) {
-					String[] paths = postMethod.paths();
-					if (null == paths || paths.length < 1) {
-						log.info(">>>Method add nothing");
-					} else {
-						for (String path : paths) {
-							if (postMethods.containsKey(path)) {
-								// 如果要添加的path，已经被暂用，则将此方法列入警告
-								warningMethods.put(path, m);
-							} else {
-								postMethods.put(path, new Object[] { m, postMethod.verify() });
-							}
-						}
-					}
-					continue;
-				}
-			}
+
 		}
 	}
 
@@ -159,7 +96,8 @@ public abstract class Controller {
 	/**
 	 * 执行方法，供Servlet入口进行调用
 	 */
-	public void exec(String[] nodes, HttpServerRequest req, HttpServerResponse resp) throws IOException {
+	public void exec(String[] nodes, RoutingContext context, HttpServerRequest req, HttpServerResponse resp)
+			throws IOException {
 
 		if (null != nodes && nodes.length > 2) {
 			// 有方法节点
@@ -170,31 +108,10 @@ public abstract class Controller {
 			if (null != ms) {
 				Method m = (Method) ms[0];
 				boolean verify = (boolean) ms[1];
-				execCall(m, verify, req, resp);
+				execCall(m, verify, context, req, resp);
 				// 已处理，直接返回
 				return;
 			}
-
-			// 再处理GET
-			ms = getMethods.get(node);
-			if (null != ms) {
-				Method m = (Method) ms[0];
-				boolean verify = (boolean) ms[1];
-				execGet(m, req, resp);
-				// 已处理，直接返回
-				return;
-			}
-
-			// 最后处理POST
-			ms = postMethods.get(node);
-			if (null != ms) {
-				Method m = (Method) ms[0];
-				boolean verify = (boolean) ms[1];
-				execPost(m, req, resp);
-				// 已处理，直接返回
-				return;
-			}
-
 		} else {
 			// 返回404错误
 			resp.setStatusCode(404);
@@ -204,71 +121,40 @@ public abstract class Controller {
 
 	}
 
-	private void execCall(Method m, boolean verify, HttpServerRequest req, HttpServerResponse resp) throws IOException {
+	private void execCall(Method m, boolean verify, RoutingContext context, HttpServerRequest req,
+			HttpServerResponse resp) throws IOException {
 		try {
 			HttpMethod reqMethod = req.method();
+			String strRequest = null;
 			if (reqMethod.equals(HttpMethod.GET)) {
 				// GET方法的内容在url里
 				// 获取GET方法的req参数
 				// 无需进行urlDecode
-				String strRequest = req.getParam("req");
-
-				if (StringUtils.isNotBlank(strRequest)) {
-					APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
-					if (verify) {
-						String id = jsonRequest.id;
-						String v = jsonRequest.v;
-
-						// getsession，使用token验证，然后跟v对比
-
-						// 暂时不验证，直接通过
-
-						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-						doResponseSuccess(resp, jsonResponse);
-					} else {
-						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-						doResponseSuccess(resp, jsonResponse);
-					}
-				} else {
-					doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
-				}
-
+				strRequest = req.getParam("req");
 			} else {
 				// 其它方法都按POST处理，认为内容在body里
+				strRequest = context.getBodyAsString(CodecUtils.ENCODING_UTF8);
+				System.out.println(strRequest);
+			}
 
-				Buffer fullRequestBody = Buffer.buffer();
-				req.bodyHandler(buf -> {
-					fullRequestBody.appendBuffer(buf);
-				});
+			if (StringUtils.isNotBlank(strRequest)) {
+				APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
+				if (verify) {
+					String id = jsonRequest.id;
+					String v = jsonRequest.v;
 
-				req.endHandler(buf -> {
-					String strRequest = fullRequestBody.toString(CodecUtils.CHARSET_UTF8);
+					// getsession，使用token验证，然后跟v对比
 
-					try {
-						if (StringUtils.isNotBlank(strRequest)) {
-							APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
-							if (verify) {
-								String id = jsonRequest.id;
-								String v = jsonRequest.v;
+					// 暂时不验证，直接通过
 
-								// getsession，使用token验证，然后跟v对比
-
-								// 暂时不验证，直接通过
-
-								APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-								doResponseSuccess(resp, jsonResponse);
-							} else {
-								APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-								doResponseSuccess(resp, jsonResponse);
-							}
-						} else {
-							doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
-						}
-					} catch (Exception e) {
-						resp.setStatusCode(500);
-						resp.setStatusMessage(e.getMessage());
-					}
-				});
+					APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+					doResponseSuccess(resp, jsonResponse);
+				} else {
+					APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+					doResponseSuccess(resp, jsonResponse);
+				}
+			} else {
+				doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
 			}
 
 			// 如果调用出现异常，则按服务端规范，将错误信息按APIResponse格式进行返回
