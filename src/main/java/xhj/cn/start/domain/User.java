@@ -59,7 +59,10 @@ public class User {
 	@RDSAnnField(column = RDSAnnField.TIME)
 	public Date creatTime;
 	
-	
-	
+	/**
+	 * 用户标签列表
+	 */
+	@RDSAnnField(column = RDSAnnField.JSON)
+	public String tagList;
 
 }
