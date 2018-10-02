@@ -43,7 +43,7 @@ public class DataSourceUtils {
 	 *            webapp的目录
 	 */
 	public static void initDataSourceConfig(String webappFolder) {
-		String fileName = StringUtils.join(webappFolder, "/", "WEB-INF", "/");
+		String fileName = StringUtils.join(webappFolder, "/");
 		fileName = fixSeparator(fileName);
 
 		log.info("&&&&&initDataSourceConfig>>>{}", fileName);
