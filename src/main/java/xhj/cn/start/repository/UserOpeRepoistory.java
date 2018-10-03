@@ -23,14 +23,14 @@ public class UserOpeRepoistory extends RDSRepository<User> {
 	}
 	
 	/**
-	 * @描述 根据用户openId拉取用户信息
+	 * @描述 根据需求参数拉取用户信息
 	 * @param conn
 	 * @param openId
 	 * @return
 	 * @throws Exception
 	 */
-	public User getByUserOpenId(DruidPooledConnection conn, String user_openId) throws Exception{
-		return get(conn, "WHERE user_openId=?", new Object[] { user_openId });
+	public User getByUserKeys(DruidPooledConnection conn, List all) throws Exception{
+		return getByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
 	
 	/**

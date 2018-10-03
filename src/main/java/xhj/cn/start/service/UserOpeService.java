@@ -9,6 +9,7 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 
 import xhj.cn.start.domain.User;
 import xhj.cn.start.repository.UserOpeRepoistory;
+import xhj.cn.start.util.GetDomain;
 
 public class UserOpeService {
 	
@@ -33,6 +34,8 @@ public class UserOpeService {
 		}
 	}
 	
+	GetDomain getDomain = new GetDomain();
+	
 	/**
 	 * @描述 用户列表
 	 * @param conn
@@ -53,7 +56,10 @@ public class UserOpeService {
 	 * @throws Exception
 	 */
 	public User getByUserOpenId(DruidPooledConnection conn, String openId) throws Exception {
-		return userOpeReporistory.getByUserOpenId(conn, openId);
+		User user = new User();
+		user.user_openId = openId;
+		List<Object> list = getDomain.getDomain(user.getClass());
+		return userOpeReporistory.getByUserKeys(conn, list);
 	}
 
 }
