@@ -29,12 +29,13 @@ public class MainVerticle extends AbstractVerticle {
 	protected Map<String, Controller> ctrlMap;
 
 	public void init() {
+
+		DataSourceUtils.initDataSourceConfig();
+
 		ctrlMap = new HashMap<>();
 
 		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
 		putCtrlInMap(ctrlMap, UserController.getInstance("user"));
-
-		DataSourceUtils.initDataSourceConfig();
 	}
 
 	public static void main(String[] args) {
