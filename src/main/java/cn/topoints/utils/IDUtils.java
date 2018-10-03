@@ -74,6 +74,7 @@ public class IDUtils {
 		return (simpleId >>> 8);
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		long time = System.currentTimeMillis();

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 
 import cn.topoints.utils.CodecUtils;
+import cn.topoints.utils.data.ots.OTSDataSource;
 //import cn.topoints.utils.data.opensearch.OpenSearchDataSource;
 //import cn.topoints.utils.data.ots.OTSDataSource;
 import cn.topoints.utils.data.rds.RDSDataSource;
@@ -42,16 +43,12 @@ public class DataSourceUtils {
 	 * @param webappFolder
 	 *            webapp的目录
 	 */
-	public static void initDataSourceConfig(String webappFolder) {
-		String fileName = StringUtils.join(webappFolder, "/");
-		fileName = fixSeparator(fileName);
-
-		log.info("&&&&&initDataSourceConfig>>>{}", fileName);
+	public static void initDataSourceConfig() {
 		FileInputStream fis;
 		List<ConfigItem> array = null;
 		try {
-			String dscfg = StringUtils.join(fileName, "configs/", "ds.cfg");
-			fis = new FileInputStream(dscfg);
+			fis = new FileInputStream("configs/ds.cfg");
+			log.info("&&&&&initDataSourceConfig>>>{}", "configs/ds.cfg");
 
 			Input in = new Input(fis);
 			String str = in.readAllToString(CodecUtils.CHARSET_UTF8);
@@ -62,16 +59,15 @@ public class DataSourceUtils {
 			for (ConfigItem ci : array) {
 				try {
 					Properties p = new Properties();
-					String ciname = StringUtils.join(fileName, "configs/", ci.filename);
+					String ciname = StringUtils.join("configs/", ci.filename);
 					ciname = fixSeparator(ciname);
 					log.info(">>>ciname>>{}", ciname);
 					p.load(new FileInputStream(ciname));
 
-					// if (ci.type.equalsIgnoreCase(TYPE_OTS)) {
-					// OTSDataSource ds = new OTSDataSource(p);
-					// dsMap.put(ci.name, ds);
-					// } else
-					if (ci.type.equalsIgnoreCase(TYPE_JDBC)) {
+					if (ci.type.equalsIgnoreCase(TYPE_OTS)) {
+						OTSDataSource ds = new OTSDataSource(p);
+						dsMap.put(ci.name, ds);
+					} else if (ci.type.equalsIgnoreCase(TYPE_JDBC)) {
 						RDSDataSource ds = new RDSDataSource(p);
 						dsMap.put(ci.name, ds);
 					}

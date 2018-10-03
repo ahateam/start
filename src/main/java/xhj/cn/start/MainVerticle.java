@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.topoints.utils.CodecUtils;
 import cn.topoints.utils.api.http.Controller;
+import cn.topoints.utils.data.DataSourceUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -31,6 +32,7 @@ public class MainVerticle extends AbstractVerticle {
 
 		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
 
+		DataSourceUtils.initDataSourceConfig();
 	}
 
 	public static void main(String[] args) {
