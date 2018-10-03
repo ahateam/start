@@ -54,6 +54,7 @@ public class ChannelOpeController extends Controller {
 	 *                 营业员信息对象
 	 * @throws Exception
 	 */
+	@doCall(paths = "getAssistantById")
 	public APIResponse getAssistantById(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long assistantId = Param.getLong(c, "assistantId");

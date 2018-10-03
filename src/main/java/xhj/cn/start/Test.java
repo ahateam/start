@@ -6,6 +6,8 @@ import cn.topoints.core.domain.UserSession;
 import cn.topoints.utils.data.DataSource;
 import cn.topoints.utils.data.DataSourceUtils;
 import cn.topoints.utils.data.rds.RDSUtils;
+import xhj.cn.start.domain.Assistant;
+import xhj.cn.start.domain.Store;
 
 public class Test {
 
@@ -35,7 +37,7 @@ public class Test {
 
 			// RDSUtils.dropTableByEntity(dsRds, Tunnel.class);
 			
-			 RDSUtils.createTableByEntity(dsRds, UserSession.class);
+			 RDSUtils.createTableByEntity(dsRds, Store.class);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
