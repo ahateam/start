@@ -1,8 +1,8 @@
 #外网地址
-url:jdbc:mysql://rm-2ze06090p3499ibxtmo.mysql.rds.aliyuncs.com:3306/weixin?useUnicode=true&characterEncoding=utf-8
+url:jdbc:mysql://rm-2ze06090p3499ibxtmo.mysql.rds.aliyuncs.com:3306/start?useUnicode=true&characterEncoding=utf-8
 
 #内网地址
-#url:jdbc:mysql://rm-2ze06090p3499ibxt.mysql.rds.aliyuncs.com:3306/weixin?useUnicode=true&characterEncoding=utf-8
+#url:jdbc:mysql://rm-2ze06090p3499ibxt.mysql.rds.aliyuncs.com:3306/start?useUnicode=true&characterEncoding=utf-8
 
 driverClassName:com.mysql.cj.jdbc.Driver
 username:root
