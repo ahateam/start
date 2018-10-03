@@ -58,8 +58,9 @@ public class ChannelOpeController extends Controller {
 	public APIResponse getAssistantById(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long assistantId = Param.getLong(c, "assistantId");
+		log.info("This is controller!!");
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
-			Assistant assistant = channelOpeService.getAssistantByKeys(conn, assistantId, null, null);
+			Assistant assistant = channelOpeService.getAssistantById(conn, assistantId);
 			return APIResponse.getNewSuccessResp(Param.checkNull(assistant));
 		}
 	}

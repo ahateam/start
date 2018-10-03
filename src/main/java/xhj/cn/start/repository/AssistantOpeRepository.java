@@ -35,6 +35,10 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 		return getByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
 	
+	public Assistant getAssistantById(DruidPooledConnection conn,Long assistantId) throws ServerException {
+		return get(conn, "where assistant_id = ?", new Object[] {assistantId});
+	}
+	
 	/**
 	 * @描述 获取所有营业员列表
 	 * @param conn

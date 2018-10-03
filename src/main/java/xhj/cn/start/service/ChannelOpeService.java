@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 
+import cn.topoints.utils.api.ServerException;
 import xhj.cn.start.domain.Assistant;
 import xhj.cn.start.domain.Store;
 import xhj.cn.start.repository.AssistantOpeRepository;
@@ -56,6 +57,11 @@ public class ChannelOpeService {
 		a.assistantStorePoiId = assistantStorePoiId;
 		List<Object> domain = gd.getDomain(a.getClass());
 		return assistantOpeRepository.getAssistantByKeys(conn, domain);
+	}
+	
+	
+	public Assistant getAssistantById(DruidPooledConnection conn, Long assistantId) throws Exception {
+		return assistantOpeRepository.getAssistantById(conn, assistantId);
 	}
 	
 	/**

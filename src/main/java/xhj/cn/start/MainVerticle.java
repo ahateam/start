@@ -36,13 +36,13 @@ public class MainVerticle extends AbstractVerticle {
 		ctrlMap = new HashMap<>();
 
 		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
-<<<<<<< HEAD
+
 		putCtrlInMap(ctrlMap, ChannelOpeController.getInstance("channel"));
 
 		DataSourceUtils.initDataSourceConfig();
-=======
+
 		putCtrlInMap(ctrlMap, UserController.getInstance("user"));
->>>>>>> origin/master
+
 	}
 
 	public static void main(String[] args) {
