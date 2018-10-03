@@ -6,7 +6,7 @@ import java.util.List;
 
 public class GetDomain {
 	
-	public static List<Object> getDomain(Class<?> clazz) throws Exception{
+	public List<Object> getDomain(Class<?> clazz) throws Exception{
 		//存储对象对应变量名
 		List<String> key = new ArrayList<String>();
 		//存储对象对应变量值
