@@ -9,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.topoints.core.controller.UserController;
 import cn.topoints.utils.CodecUtils;
 import cn.topoints.utils.api.http.Controller;
+import cn.topoints.utils.data.DataSourceUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -30,7 +32,9 @@ public class MainVerticle extends AbstractVerticle {
 		ctrlMap = new HashMap<>();
 
 		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
+		putCtrlInMap(ctrlMap, UserController.getInstance("user"));
 
+		DataSourceUtils.initDataSourceConfig();
 	}
 
 	public static void main(String[] args) {
