@@ -3,8 +3,9 @@ package xhj.cn.start.domain;
 import cn.topoints.utils.data.rds.RDSAnnEntity;
 import cn.topoints.utils.data.rds.RDSAnnField;
 import cn.topoints.utils.data.rds.RDSAnnID;
+import cn.topoints.utils.data.rds.RDSAnnIndex;
 
-@RDSAnnEntity(alias = "tb_store_message")
+@RDSAnnEntity(alias = "tb_store")
 public class Store {
 
 	/**
@@ -13,11 +14,17 @@ public class Store {
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
 	public Long id;
+	
+	/**
+	 * 所属app的编号</br>
+	 * (最好建索引)
+	 */
+	@RDSAnnField(column = RDSAnnField.ID)
+	public Long appId;
 
 	/**
 	 * 门店poi_id
 	 */
-	@RDSAnnID
 	@RDSAnnField(column = "VARCHAR(64)")
 	public String poiId;
 
