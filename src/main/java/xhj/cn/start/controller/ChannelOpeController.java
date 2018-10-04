@@ -234,7 +234,7 @@ public class ChannelOpeController extends Controller {
 	 */
 	public APIResponse setAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
-		//获取门店对应信息
+		//获取营业员对应信息
 		Long assistantId = IDUtils.getSimpleId();
 		String assistantName = Param.getString(c, "assistantName");
 		String assistantStorePoiId = Param.getString(c, "assistantStorePoiId");
@@ -275,6 +275,135 @@ public class ChannelOpeController extends Controller {
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
 			channelOpeService.setStore(conn, storeId, storePoiId, storeBusinessName, storeProvince, storeCity, storeBranchName);
 			return APIResponse.getNewSuccessResp(storeId);
+		}
+	}
+	
+	/**
+	 * @描述 根据ID清除营业员
+	 * 
+	 * @param assistantId
+	 *            营业员ID
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse delAssistant(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取营业员ID
+		Long assistantId = Param.getLong(c, "assistantId");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			channelOpeService.delAssistant(conn, assistantId);
+			return APIResponse.getNewSuccessResp();
+		}
+	}
+	
+	/**
+	 * @描述 根据ID清除门店
+	 * 
+	 * @param storeId
+	 *            门店ID
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse delStore(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取门店ID
+		Long storeId = Param.getLong(c, "storeId");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			channelOpeService.delStore(conn, storeId);
+			return APIResponse.getNewSuccessResp();
+		}
+	}
+	
+	/**
+	 * @描述 修改营业员信息
+	 * 
+	 * @param updateAssistantId
+	 *            营业员ID（修改范围）
+	 * @param updateAssistantName
+	 *            营业员姓名（修改范围）
+	 * @param updateAssistantStorePoiId
+	 *            营业员对应门店poi_id（修改范围）
+	 * @param assistantName
+	 *            将修改营业员姓名信息
+	 * @param assistantStorePoiId
+	 *            将修改营业员对应门店poi_id信息
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse updateAssistant(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取修改范围
+		Long updateAssistantId = Param.getLongDFLT(c, "updateAssistantId", null);
+		String updateAssistantName = Param.getStringDFLT(c, "updateAssistantName", null);
+		String updateAssistantStorePoiId = Param.getStringDFLT(c, "updateAssistantStorePoiId", null);
+		//获取修改信息
+		Assistant assistant = new Assistant();
+		assistant.assistantName = Param.getStringDFLT(c, "assistantName", null);
+		assistant.assistantStorePoiId = Param.getStringDFLT(c, "assistantStorePoiId", null);
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			if(updateAssistantId == null && updateAssistantName == null && updateAssistantStorePoiId == null) {
+				log.info("修改范围有误！！");
+			}else {
+				channelOpeService.updateAssistant(conn, updateAssistantId, updateAssistantName, updateAssistantStorePoiId, assistant);
+			}
+			return APIResponse.getNewSuccessResp();
+		}
+	}
+	
+	/**
+	 * @描述 修改门店信息
+	 * 
+	 * @param storeId
+	 *            门店ID（修改范围）
+	 * @param storePoiId
+	 *            门店poi_id（修改范围）
+	 * @param storeBusinessName
+	 *            门店名称（修改范围）
+	 * @param storeProvince
+	 *            门店所在省份（修改范围）
+	 * @param storeCity
+	 *            门店所在城市（修改范围）
+	 * @param storeBranchName
+	 *            分店名（修改范围）
+	 * @param storeBusinessName
+	 *            将修改门店名称
+	 * @param storeProvince
+	 *            将修改门店所在省份
+	 * @param storeCity
+	 *            将修改门店所在城市
+	 * @param storeBranchName
+	 *            将修改分店名
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse updateStore(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取修改范围
+		Long updateStoreId = Param.getLongDFLT(c, "updateStoreId", null);
+		String updateStorePoiId = Param.getStringDFLT(c, "updateStorePoiId", null);
+		String updateStoreBusinessName = Param.getStringDFLT(c, "updateStoreBusinessName", null);
+		String updateStoreProvince = Param.getStringDFLT(c, "updateStoreProvince", null);
+		String updateStoreCity = Param.getStringDFLT(c, "updateStoreCity", null);
+		String updateStoreBranchName = Param.getStringDFLT(c, "updateStoreBranchName", null);
+		//获取修改信息
+		Store store = new Store();
+		store.storeBusinessName = Param.getString(c, "storeBusinessName");
+		store.storeProvince = Param.getString(c, "storeProvince");
+		store.storeCity = Param.getString(c, "storeCity");
+		store.storeBranchName = Param.getString(c, "storeBranchName");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			if(updateStoreId == null && updateStorePoiId == null && updateStoreBusinessName == null
+					 && updateStoreProvince == null && updateStoreCity == null && updateStoreBranchName == null) {
+				log.info("修改范围有误！！");
+			}else {
+				channelOpeService.updateStore(conn, updateStoreId, updateStorePoiId, updateStoreBusinessName, 
+						updateStoreProvince, updateStoreCity, updateStoreBranchName, store);
+			}
+			return APIResponse.getNewSuccessResp();
 		}
 	}
 
