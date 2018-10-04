@@ -22,7 +22,7 @@ public class Store {
 	public String storePoiId;
 	
 	/**
-	 * 总店名
+	 * 门店名称
 	 */
 	@RDSAnnField(column = "VARCHAR(32)")
 	public String storeBusinessName;

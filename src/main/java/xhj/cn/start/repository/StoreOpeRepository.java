@@ -42,7 +42,7 @@ public class StoreOpeRepository extends RDSRepository<Store> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Store> getAllStoreTable(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+	public List<Store> getAllStoreList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
 		return getList(conn, null, null, count, offset);
 	}
 	
@@ -55,29 +55,10 @@ public class StoreOpeRepository extends RDSRepository<Store> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Store> getStoreTable(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
+	public List<Store> getStoreList(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
 		return getListByKeys(conn, (String[])all.get(0), (Object[])all.get(1), count, offset);
 	}
 	
-	/**
-	 * @描述 添加门店信息
-	 * @param conn
-	 * @param store
-	 * @throws Exception
-	 */
-	public void setStore(DruidPooledConnection conn,Store store) throws Exception {
-		insert(conn, store);
-	}
-	
-	/**
-	 * @描述 根据要求清除门店
-	 * @param conn
-	 * @param store
-	 * @throws Exception
-	 */
-	public void delStore(DruidPooledConnection conn,List all) throws Exception {
-		deleteByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
-	}
 	
 	/**
 	 * @描述 根据要求修改门店对应信息

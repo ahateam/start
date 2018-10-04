@@ -34,7 +34,13 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	public Assistant getAssistantByKeys(DruidPooledConnection conn,List all) throws Exception {
 		return getByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
-	
+	/**
+	 * @描述 根据ID查询对应营业员
+	 * @param conn
+	 * @param assistantId
+	 * @return
+	 * @throws ServerException
+	 */
 	public Assistant getAssistantById(DruidPooledConnection conn,Long assistantId) throws ServerException {
 		return get(conn, "where assistant_id = ?", new Object[] {assistantId});
 	}
@@ -47,7 +53,7 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Assistant> getAllAssistantTable(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+	public List<Assistant> getAllAssistantList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
 		return getList(conn, null, null, count, offset);
 	}
 	
@@ -60,28 +66,8 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Assistant> getAssistantTable(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
+	public List<Assistant> getAssistantList(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
 		return getListByKeys(conn, (String[])all.get(0), (Object[])all.get(1), count, offset);
-	}
-	
-	/**
-	 * @描述 添加营业员信息
-	 * @param conn
-	 * @param Assistant
-	 * @throws Exception
-	 */
-	public void setAssistant(DruidPooledConnection conn,Assistant assistant) throws Exception {
-		insert(conn, assistant);
-	}
-	
-	/**
-	 * @描述 根据要求清除营业员
-	 * @param conn
-	 * @param Assistant
-	 * @throws Exception
-	 */
-	public void delAssistant(DruidPooledConnection conn,List all) throws Exception {
-		deleteByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
 	
 	/**

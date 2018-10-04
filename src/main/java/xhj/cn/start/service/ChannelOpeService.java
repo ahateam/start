@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 
-import cn.topoints.utils.api.ServerException;
 import xhj.cn.start.domain.Assistant;
 import xhj.cn.start.domain.Store;
 import xhj.cn.start.repository.AssistantOpeRepository;
@@ -55,11 +54,17 @@ public class ChannelOpeService {
 		a.assistantId = assistantId;
 		a.assistantName = assistantName;
 		a.assistantStorePoiId = assistantStorePoiId;
-		List<Object> domain = gd.getDomain(a.getClass());
+		List<Object> domain = gd.getDomain(a);
 		return assistantOpeRepository.getAssistantByKeys(conn, domain);
 	}
 	
-	
+	/**
+	 * @描述 根据ID查询对应营业员
+	 * @param conn
+	 * @param assistantId
+	 * @return
+	 * @throws Exception
+	 */
 	public Assistant getAssistantById(DruidPooledConnection conn, Long assistantId) throws Exception {
 		return assistantOpeRepository.getAssistantById(conn, assistantId);
 	}
@@ -82,7 +87,7 @@ public class ChannelOpeService {
 		s.storeProvince = storeProvince;
 		s.storeCity = storeCity;
 		s.storeBranchName = storeBranchName;
-		List<Object> domain = gd.getDomain(s.getClass());
+		List<Object> domain = gd.getDomain(s);
 		return storeOpeRepository.getStoreByKeys(conn, domain);
 	}
 	
@@ -94,8 +99,8 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Assistant> getAllAssistantTable(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
-		return assistantOpeRepository.getAllAssistantTable(conn, count, offset);
+	public List<Assistant> getAllAssistantList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+		return assistantOpeRepository.getAllAssistantList(conn, count, offset);
 	}
 	
 	/**
@@ -106,8 +111,8 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Store> getAllStoreTable(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
-		return storeOpeRepository.getAllStoreTable(conn, count, offset);
+	public List<Store> getAllStoreList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+		return storeOpeRepository.getAllStoreList(conn, count, offset);
 	}
 	
 	/**
@@ -121,14 +126,14 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Assistant> getAssistantTable(DruidPooledConnection conn, Long assistantId, String assistantName, 
+	public List<Assistant> getAssistantList(DruidPooledConnection conn, Long assistantId, String assistantName, 
 			String assistantStorePoiId,Integer count,Integer offset) throws Exception{
 		Assistant a = new Assistant();
 		a.assistantId = assistantId;
 		a.assistantName = assistantName;
 		a.assistantStorePoiId = assistantStorePoiId;
-		List<Object> domain = gd.getDomain(a.getClass());
-		return assistantOpeRepository.getAssistantTable(conn, domain, count, offset);
+		List<Object> domain = gd.getDomain(a);
+		return assistantOpeRepository.getAssistantList(conn, domain, count, offset);
 	}
 	
 	/**
@@ -142,7 +147,7 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Store> getStoreTable(DruidPooledConnection conn, Long storeId, String storePoiId, 
+	public List<Store> getStoreList(DruidPooledConnection conn, Long storeId, String storePoiId, 
 			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName,
 			Integer count,Integer offset) throws Exception{
 		Store s = new Store();
@@ -152,8 +157,8 @@ public class ChannelOpeService {
 		s.storeProvince = storeProvince;
 		s.storeCity = storeCity;
 		s.storeBranchName = storeBranchName;
-		List<Object> domain = gd.getDomain(s.getClass());
-		return storeOpeRepository.getStoreTable(conn, domain, count, offset);
+		List<Object> domain = gd.getDomain(s);
+		return storeOpeRepository.getStoreList(conn, domain, count, offset);
 	}
 	
 	/**
@@ -171,7 +176,7 @@ public class ChannelOpeService {
 		a.assistantId = assistantId;
 		a.assistantName = assistantName;
 		a.assistantStorePoiId = assistantStorePoiId;
-		assistantOpeRepository.setAssistant(conn, a);
+		assistantOpeRepository.insert(conn, a);
 		return a;
 	}
 	
@@ -196,30 +201,24 @@ public class ChannelOpeService {
 		s.storeProvince = storeProvince;
 		s.storeCity = storeCity;
 		s.storeBranchName = storeBranchName;
-		storeOpeRepository.setStore(conn, s);
+		storeOpeRepository.insert(conn, s);
 		return s;
 	}
 	
 	/**
-	 * @描述 根据需求清除营业员
+	 * @描述 根据ID清除营业员
 	 * @param conn
 	 * @param assistantId
 	 * @param assistantName
 	 * @param assistantStorePoiId
 	 * @throws Exception
 	 */
-	public void delAssistant(DruidPooledConnection conn, Long assistantId, String assistantName, 
-			String assistantStorePoiId) throws Exception {
-		Assistant a = new Assistant();
-		a.assistantId = assistantId;
-		a.assistantName = assistantName;
-		a.assistantStorePoiId = assistantStorePoiId;
-		List<Object> domain = gd.getDomain(a.getClass());
-		assistantOpeRepository.delAssistant(conn, domain);
+	public void delAssistant(DruidPooledConnection conn, Long assistantId) throws Exception {
+		assistantOpeRepository.deleteByKey(conn, "assistant_id", new Object[]{assistantId});
 	}
 	
 	/**
-	 * @描述 根据需求清除门店
+	 * @描述 根据ID清除门店
 	 * @param conn
 	 * @param storeId
 	 * @param storePoiId
@@ -229,17 +228,8 @@ public class ChannelOpeService {
 	 * @param storeBranchName
 	 * @throws Exception
 	 */
-	public void delStore(DruidPooledConnection conn, Long storeId, String storePoiId, 
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName) throws Exception {
-		Store s = new Store();
-		s.storeId = storeId;
-		s.storePoiId = storePoiId;
-		s.storeBusinessName = storeBusinessName;
-		s.storeProvince = storeProvince;
-		s.storeCity = storeCity;
-		s.storeBranchName = storeBranchName;
-		List<Object> domain = gd.getDomain(s.getClass());
-		storeOpeRepository.delStore(conn, domain);
+	public void delStore(DruidPooledConnection conn, Long storeId) throws Exception {
+		storeOpeRepository.deleteByKey(conn, "store_id", new Object[]{storeId});
 	}
 	
 	/**
@@ -257,7 +247,7 @@ public class ChannelOpeService {
 		a.assistantId = assistantId;
 		a.assistantName = assistantName;
 		a.assistantStorePoiId = assistantStorePoiId;
-		List<Object> domain = gd.getDomain(a.getClass());
+		List<Object> domain = gd.getDomain(a);
 		assistantOpeRepository.updateAssistant(conn, domain, assistant);
 	}
 	
@@ -282,7 +272,7 @@ public class ChannelOpeService {
 		s.storeProvince = storeProvince;
 		s.storeCity = storeCity;
 		s.storeBranchName = storeBranchName;
-		List<Object> domain = gd.getDomain(s.getClass());
+		List<Object> domain = gd.getDomain(s);
 		storeOpeRepository.updateStore(conn, domain, store);
 	}
 

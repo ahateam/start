@@ -1,5 +1,6 @@
 package xhj.cn.start.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.topoints.utils.IDUtils;
 import cn.topoints.utils.api.Param;
-import cn.topoints.utils.api.ServerException;
 import cn.topoints.utils.api.http.APIRequest;
 import cn.topoints.utils.api.http.APIResponse;
 import cn.topoints.utils.api.http.Controller;
@@ -60,7 +61,7 @@ public class ChannelOpeController extends Controller {
 		Long assistantId = Param.getLong(c, "assistantId");
 		log.info("This is controller!!");
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
-			Assistant assistant = channelOpeService.getAssistantById(conn, assistantId);
+			Assistant assistant = channelOpeService.getAssistantByKeys(conn, assistantId, null, null);
 			return APIResponse.getNewSuccessResp(Param.checkNull(assistant));
 		}
 	}
@@ -86,14 +87,194 @@ public class ChannelOpeController extends Controller {
 		}
 	}
 	
-	
-	public APIResponse getAllAssistantTable(APIRequest req) throws Exception {
+	/**
+	 * @描述 获取所有营业员列表
+	 * 
+	 * @param count
+	 *            查询数据条数
+	 * @param offset
+	 *            起始查询数据
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse getAllAssistantList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Integer count = Param.getInteger(c, "count");
 		Integer offset = Param.getInteger(c, "offset");
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
-			List<Assistant> allAssistant = channelOpeService.getAllAssistantTable(conn, count, offset);
+			List<Assistant> allAssistant = channelOpeService.getAllAssistantList(conn, count, offset);
 			return APIResponse.getNewSuccessResp(allAssistant);
+		}
+	}
+	
+	
+	/**
+	 * @描述 获取所有门店列表
+	 * 
+	 * @param count
+	 *            查询数据条数
+	 * @param offset
+	 *            起始查询数据
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse getAllStoreList(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		Integer count = Param.getInteger(c, "count");
+		Integer offset = Param.getInteger(c, "offset");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			List<Store> allStore = channelOpeService.getAllStoreList(conn, count, offset);
+			return APIResponse.getNewSuccessResp(allStore);
+		}
+	}
+	
+	
+	/**
+	 * @描述 根据需求获取营业员列表
+	 * 
+	 * @param assistantId
+	 *            营业员ID   
+	 * @param assistantName
+	 *            营业员姓名    
+	 * @param assistantStorePoiId
+	 *            营业员对应门店poi_id
+	 * @param count
+	 *            查询数据条数
+	 * @param offset
+	 *            起始查询数据
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse getAssistantList(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取营业员对应信息
+		Long assistantId = Param.getLongDFLT(c, "assistantId", null);
+		String assistantName = Param.getStringDFLT(c, "assistantName", null);
+		String assistantStorePoiId = Param.getStringDFLT(c, "assistantStorePoiId", null);
+		//获取分页参数
+		Integer count = Param.getInteger(c, "count");
+		Integer offset = Param.getInteger(c, "offset");
+		//执行查询
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			List<Assistant> assistantList = new ArrayList<Assistant>();
+			if(assistantId == null || assistantName == null || assistantStorePoiId == null) {
+				assistantList = channelOpeService.getAllAssistantList(conn, count, offset);
+			}else {
+				assistantList = channelOpeService.getAssistantList(conn, assistantId, assistantName, assistantStorePoiId, count, offset);
+			}
+			return APIResponse.getNewSuccessResp(assistantList);
+		}
+	}
+	
+	
+	/**
+	 * @描述 根据需求获取营业员列表
+	 * 
+	 * @param storeId
+	 *            门店ID
+	 * @param storePoiId
+	 *            门店poi_id
+	 * @param storeBusinessName
+	 *            门店名称
+	 * @param storeProvince
+	 *            门店所在省份
+	 * @param storeCity
+	 *            门店所在城市
+	 * @param storeBranchName
+	 *            分店名
+	 * @param count
+	 *            查询数据条数
+	 * @param offset
+	 *            起始查询数据
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse getStoreList(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取门店对应信息
+		Long storeId = Param.getLongDFLT(c, "storeId", null);
+		String storePoiId = Param.getStringDFLT(c, "storePoiId", null);
+		String storeBusinessName = Param.getStringDFLT(c, "storeBusinessName", null);
+		String storeProvince = Param.getStringDFLT(c, "storeProvince", null);
+		String storeCity = Param.getStringDFLT(c, "storeCity", null);
+		String storeBranchName = Param.getStringDFLT(c, "storeBranchName", null);
+		//获取分页参数
+		Integer count = Param.getInteger(c, "count");
+		Integer offset = Param.getInteger(c, "offset");
+		//执行查询
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			List<Store> storeList = new ArrayList<Store>();
+			if(storeId == null || storePoiId == null || storeBusinessName == null || 
+					storeProvince == null || storeCity == null || storeBranchName == null) {
+				storeList = channelOpeService.getAllStoreList(conn, count, offset);
+			}else {
+				storeList = channelOpeService.getStoreList(conn, storeId, storePoiId, storeBusinessName,
+						storeProvince, storeCity, storeBranchName, count, offset);
+			}
+			return APIResponse.getNewSuccessResp(storeList);
+		}
+	}
+	
+	/**
+	 * @描述 创建营业员
+	 * 
+	 * @param assistantId
+	 *            营业员ID   
+	 * @param assistantName
+	 *            营业员姓名    
+	 * @param assistantStorePoiId
+	 *            营业员对应门店poi_id
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse setAssistant(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取门店对应信息
+		Long assistantId = IDUtils.getSimpleId();
+		String assistantName = Param.getString(c, "assistantName");
+		String assistantStorePoiId = Param.getString(c, "assistantStorePoiId");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			channelOpeService.setAssistant(conn, assistantId, assistantName, assistantStorePoiId);
+			return APIResponse.getNewSuccessResp(assistantId);
+		}
+	}
+	
+	/**
+	 * @描述 创建门店
+	 * 
+	 * @param storeId
+	 *            门店ID
+	 * @param storePoiId
+	 *            门店poi_id
+	 * @param storeBusinessName
+	 *            门店名称
+	 * @param storeProvince
+	 *            门店所在省份
+	 * @param storeCity
+	 *            门店所在城市
+	 * @param storeBranchName
+	 *            分店名
+	 * @return
+	 * 
+	 * @throws Exception
+	 */
+	public APIResponse setStore(APIRequest req) throws Exception {
+		JSONObject c = Param.getReqContent(req);
+		//获取门店对应信息
+		Long storeId = IDUtils.getSimpleId();
+		String storePoiId = Param.getString(c, "storePoiId");
+		String storeBusinessName = Param.getString(c, "storeBusinessName");
+		String storeProvince = Param.getString(c, "storeProvince");
+		String storeCity = Param.getString(c, "storeCity");
+		String storeBranchName = Param.getString(c, "storeBranchName");
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+			channelOpeService.setStore(conn, storeId, storePoiId, storeBusinessName, storeProvince, storeCity, storeBranchName);
+			return APIResponse.getNewSuccessResp(storeId);
 		}
 	}
 
