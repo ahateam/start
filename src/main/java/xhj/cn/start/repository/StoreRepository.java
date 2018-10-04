@@ -8,18 +8,18 @@ import cn.topoints.utils.api.ServerException;
 import cn.topoints.utils.data.rds.RDSRepository;
 import xhj.cn.start.domain.Store;
 
-public class StoreOpeRepository extends RDSRepository<Store> {
+public class StoreRepository extends RDSRepository<Store> {
 	
-	private static StoreOpeRepository ins;
+	private static StoreRepository ins;
 
-	public static synchronized StoreOpeRepository getInstance() {
+	public static synchronized StoreRepository getInstance() {
 		if (null == ins) {
-			ins = new StoreOpeRepository();
+			ins = new StoreRepository();
 		}
 		return ins;
 	}
 	
-	private StoreOpeRepository() {
+	private StoreRepository() {
 		super(Store.class);
 	}
 	

@@ -32,15 +32,11 @@ public class User {
 	 * 顶级会员（1年）
 	 */
 	public static final Byte LEVEL_MEMBER2 = 4;
-	
-	
+
 	public static final Byte STATUS_PENDING = -1; // 待审核
 	public static final Byte STATUS_NORMAL = 0; // 正常
 	public static final Byte STATUS_STOPED = 1; // 停止使用
 	public static final Byte STATUS_DELETED = 2; // 删除
-	
-	
-	
 
 	/**
 	 * 用户编号
@@ -69,7 +65,7 @@ public class User {
 	 */
 	@RDSAnnField(column = RDSAnnField.BYTE)
 	public Byte level;
-	
+
 	/**
 	 * 用户类型</br>
 	 * 预留给应用区分用户类型
@@ -118,7 +114,7 @@ public class User {
 	@RDSAnnIndex(type = RDSAnnIndex.UNIQUE)
 	@RDSAnnField(column = "VARCHAR(32)")
 	public String wbOpenId;
-	
+
 	/**
 	 * 状态
 	 */
@@ -142,5 +138,11 @@ public class User {
 	 */
 	@RDSAnnField(column = "VARCHAR(128)")
 	public String signature;
+
+	/**
+	 * 牛逼的JSON
+	 */
+	@RDSAnnField(column = RDSAnnField.JSON)
+	public String tags;
 
 }

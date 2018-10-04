@@ -6,7 +6,7 @@ import cn.topoints.core.domain.UserSession;
 import cn.topoints.utils.data.DataSource;
 import cn.topoints.utils.data.DataSourceUtils;
 import cn.topoints.utils.data.rds.RDSUtils;
-import xhj.cn.start.domain.Assistant;
+import xhj.cn.start.domain.StoreSaler;
 import xhj.cn.start.domain.Store;
 
 public class Test {

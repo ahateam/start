@@ -6,21 +6,21 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 
 import cn.topoints.utils.api.ServerException;
 import cn.topoints.utils.data.rds.RDSRepository;
-import xhj.cn.start.domain.Assistant;
+import xhj.cn.start.domain.StoreSaler;
 
-public class AssistantOpeRepository extends RDSRepository<Assistant> {
+public class StoreSalerRepository extends RDSRepository<StoreSaler> {
 	
-	private static AssistantOpeRepository ins;
+	private static StoreSalerRepository ins;
 
-	public static synchronized AssistantOpeRepository getInstance() {
+	public static synchronized StoreSalerRepository getInstance() {
 		if (null == ins) {
-			ins = new AssistantOpeRepository();
+			ins = new StoreSalerRepository();
 		}
 		return ins;
 	}
 	
-	private AssistantOpeRepository() {
-		super(Assistant.class);
+	private StoreSalerRepository() {
+		super(StoreSaler.class);
 	}
 	
 	
@@ -31,7 +31,7 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws Exception
 	 */
-	public Assistant getAssistantByKeys(DruidPooledConnection conn,List all) throws Exception {
+	public StoreSaler getAssistantByKeys(DruidPooledConnection conn,List all) throws Exception {
 		return getByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
 	/**
@@ -41,7 +41,7 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public Assistant getAssistantById(DruidPooledConnection conn,Long assistantId) throws ServerException {
+	public StoreSaler getAssistantById(DruidPooledConnection conn,Long assistantId) throws ServerException {
 		return get(conn, "where assistant_id = ?", new Object[] {assistantId});
 	}
 	
@@ -53,7 +53,7 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Assistant> getAllAssistantList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+	public List<StoreSaler> getAllAssistantList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
 		return getList(conn, null, null, count, offset);
 	}
 	
@@ -66,17 +66,17 @@ public class AssistantOpeRepository extends RDSRepository<Assistant> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public List<Assistant> getAssistantList(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
+	public List<StoreSaler> getAssistantList(DruidPooledConnection conn,List all,Integer count,Integer offset) throws Exception{
 		return getListByKeys(conn, (String[])all.get(0), (Object[])all.get(1), count, offset);
 	}
 	
 	/**
 	 * @描述 根据要求修改营业员对应信息
 	 * @param conn
-	 * @param Assistant
+	 * @param StoreSaler
 	 * @throws Exception
 	 */
-	public void updateAssistant(DruidPooledConnection conn,List all, Assistant assistant) throws Exception {
+	public void updateAssistant(DruidPooledConnection conn,List all, StoreSaler assistant) throws Exception {
 		updateByKeys(conn, (String[])all.get(0), (Object[])all.get(1), assistant, true);
 	}
 

@@ -12,7 +12,6 @@ import cn.topoints.core.domain.User;
 import cn.topoints.core.domain.UserSession;
 import cn.topoints.core.repository.UserRepository;
 import cn.topoints.core.repository.UserSessionRepository;
-import cn.topoints.core.repository.UserTagsRepository;
 import cn.topoints.utils.CacheCenter;
 import cn.topoints.utils.IDUtils;
 import cn.topoints.utils.api.BaseRC;
@@ -34,13 +33,11 @@ public class UserService {
 
 	private UserRepository userRepository;
 	private UserSessionRepository userSessionRepository;
-	private UserTagsRepository userTagsRepository;
 
 	private UserService() {
 		try {
 			userRepository = UserRepository.getInstance();
 			userSessionRepository = UserSessionRepository.getInstance();
-			userTagsRepository = UserTagsRepository.getInstance();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -202,15 +199,15 @@ public class UserService {
 	}
 
 	public JSONArray getUserTags(DruidPooledConnection conn, Long userId, String tagKey) throws Exception {
-		return userTagsRepository.getTags(conn, userId, tagKey);
+		return userRepository.getTags(conn, userId, tagKey);
 	}
 
 	public void addUserTags(DruidPooledConnection conn, Long userId, String tagKey, JSONArray tags) throws Exception {
-		userTagsRepository.addTags(conn, userId, tagKey, tags);
+		userRepository.addTags(conn, userId, tagKey, tags);
 	}
 
 	public void removeUserTags(DruidPooledConnection conn, Long userId, String tagKey, JSONArray tags)
 			throws Exception {
-		userTagsRepository.removeTags(conn, userId, tagKey, tags);
+		userRepository.removeTags(conn, userId, tagKey, tags);
 	}
 }

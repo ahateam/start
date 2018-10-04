@@ -6,51 +6,43 @@ import cn.topoints.utils.data.rds.RDSAnnID;
 
 @RDSAnnEntity(alias = "tb_store_message")
 public class Store {
-	
+
 	/**
 	 * 门店ID
 	 */
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
-	public Long storeId;
-	
+	public Long id;
+
 	/**
 	 * 门店poi_id
 	 */
 	@RDSAnnID
 	@RDSAnnField(column = "VARCHAR(64)")
-	public String storePoiId;
-	
+	public String poiId;
+
 	/**
 	 * 门店名称
 	 */
 	@RDSAnnField(column = "VARCHAR(32)")
-	public String storeBusinessName;
-	
+	public String name;
+
 	/**
 	 * 门店所在省份
 	 */
 	@RDSAnnField(column = "VARCHAR(16)")
-	public String storeProvince;
-	
+	public String province;
+
 	/**
 	 * 门店所在城市
 	 */
 	@RDSAnnField(column = "VARCHAR(16)")
-	public String storeCity;
-	
-	/**
-	 * 分店名
-	 */
-	@RDSAnnField(column = "VARCHAR(32)")
-	public String storeBranchName;
-	
+	public String city;
+
 	/**
 	 * 获取二维码参数
 	 */
 	@RDSAnnField(column = "VARCHAR(64)")
 	public String ticket;
-	
-	
 
 }

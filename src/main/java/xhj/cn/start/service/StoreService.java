@@ -7,38 +7,38 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 
-import xhj.cn.start.domain.Assistant;
 import xhj.cn.start.domain.Store;
-import xhj.cn.start.repository.AssistantOpeRepository;
-import xhj.cn.start.repository.StoreOpeRepository;
+import xhj.cn.start.domain.StoreSaler;
+import xhj.cn.start.repository.StoreRepository;
+import xhj.cn.start.repository.StoreSalerRepository;
 import xhj.cn.start.util.GetDomain;
 
-public class ChannelOpeService {
-	
-	private static Logger log = LoggerFactory.getLogger(ChannelOpeService.class);
+public class StoreService {
 
-	private static ChannelOpeService ins;
+	private static Logger log = LoggerFactory.getLogger(StoreService.class);
 
-	public static synchronized ChannelOpeService getInstance() {
+	private static StoreService ins;
+
+	public static synchronized StoreService getInstance() {
 		if (null == ins) {
-			ins = new ChannelOpeService();
+			ins = new StoreService();
 		}
 		return ins;
 	}
-	
-	private AssistantOpeRepository assistantOpeRepository;
-	private StoreOpeRepository storeOpeRepository;
+
+	private StoreSalerRepository assistantOpeRepository;
+	private StoreRepository storeOpeRepository;
 	private GetDomain gd = new GetDomain();
-	
-	private ChannelOpeService() {
+
+	private StoreService() {
 		try {
-			assistantOpeRepository = AssistantOpeRepository.getInstance();
-			storeOpeRepository = StoreOpeRepository.getInstance();
+			assistantOpeRepository = StoreSalerRepository.getInstance();
+			storeOpeRepository = StoreRepository.getInstance();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * @描述 根据对应要求查询营业员
 	 * @param conn
@@ -48,16 +48,16 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Assistant getAssistantByKeys(DruidPooledConnection conn, Long assistantId, String assistantName, 
+	public StoreSaler getStoreSalerByKeys(DruidPooledConnection conn, Long assistantId, String assistantName,
 			String assistantStorePoiId) throws Exception {
-		Assistant a = new Assistant();
-		a.assistantId = assistantId;
-		a.assistantName = assistantName;
-		a.assistantStorePoiId = assistantStorePoiId;
+		StoreSaler a = new StoreSaler();
+		a.id = assistantId;
+		a.name = assistantName;
+		a.poiId = assistantStorePoiId;
 		List<Object> domain = gd.getDomain(a);
 		return assistantOpeRepository.getAssistantByKeys(conn, domain);
 	}
-	
+
 	/**
 	 * @描述 根据ID查询对应营业员
 	 * @param conn
@@ -65,10 +65,10 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Assistant getAssistantById(DruidPooledConnection conn, Long assistantId) throws Exception {
+	public StoreSaler getAssistantById(DruidPooledConnection conn, Long assistantId) throws Exception {
 		return assistantOpeRepository.getAssistantById(conn, assistantId);
 	}
-	
+
 	/**
 	 * @描述 根据对应要求查询门店
 	 * @param conn
@@ -78,19 +78,18 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Store getStoreByKeys(DruidPooledConnection conn, Long storeId, String storePoiId, 
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName) throws Exception {
+	public Store getStoreByKeys(DruidPooledConnection conn, Long storeId, String storePoiId, String storeBusinessName,
+			String storeProvince, String storeCity) throws Exception {
 		Store s = new Store();
-		s.storeId = storeId;
-		s.storePoiId = storePoiId;
-		s.storeBusinessName = storeBusinessName;
-		s.storeProvince = storeProvince;
-		s.storeCity = storeCity;
-		s.storeBranchName = storeBranchName;
+		s.id = storeId;
+		s.poiId = storePoiId;
+		s.name = storeBusinessName;
+		s.province = storeProvince;
+		s.city = storeCity;
 		List<Object> domain = gd.getDomain(s);
 		return storeOpeRepository.getStoreByKeys(conn, domain);
 	}
-	
+
 	/**
 	 * @描述 获取所有营业员列表
 	 * @param conn
@@ -99,10 +98,11 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Assistant> getAllAssistantList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+	public List<StoreSaler> getAllAssistantList(DruidPooledConnection conn, Integer count, Integer offset)
+			throws Exception {
 		return assistantOpeRepository.getAllAssistantList(conn, count, offset);
 	}
-	
+
 	/**
 	 * @描述 获取所有门店列表
 	 * @param conn
@@ -111,10 +111,10 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Store> getAllStoreList(DruidPooledConnection conn,Integer count,Integer offset) throws Exception{
+	public List<Store> getAllStoreList(DruidPooledConnection conn, Integer count, Integer offset) throws Exception {
 		return storeOpeRepository.getAllStoreList(conn, count, offset);
 	}
-	
+
 	/**
 	 * @描述 根据对应信息获取营业员列表
 	 * @param conn
@@ -126,16 +126,16 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Assistant> getAssistantList(DruidPooledConnection conn, Long assistantId, String assistantName, 
-			String assistantStorePoiId,Integer count,Integer offset) throws Exception{
-		Assistant a = new Assistant();
-		a.assistantId = assistantId;
-		a.assistantName = assistantName;
-		a.assistantStorePoiId = assistantStorePoiId;
+	public List<StoreSaler> getAssistantList(DruidPooledConnection conn, Long assistantId, String assistantName,
+			String assistantStorePoiId, Integer count, Integer offset) throws Exception {
+		StoreSaler a = new StoreSaler();
+		a.id = assistantId;
+		a.name = assistantName;
+		a.poiId = assistantStorePoiId;
 		List<Object> domain = gd.getDomain(a);
 		return assistantOpeRepository.getAssistantList(conn, domain, count, offset);
 	}
-	
+
 	/**
 	 * @描述 根据对应信息获取门店列表
 	 * @param conn
@@ -147,20 +147,19 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Store> getStoreList(DruidPooledConnection conn, Long storeId, String storePoiId, 
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName,
-			Integer count,Integer offset) throws Exception{
+	public List<Store> getStoreList(DruidPooledConnection conn, Long storeId, String storePoiId,
+			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName, Integer count,
+			Integer offset) throws Exception {
 		Store s = new Store();
-		s.storeId = storeId;
-		s.storePoiId = storePoiId;
-		s.storeBusinessName = storeBusinessName;
-		s.storeProvince = storeProvince;
-		s.storeCity = storeCity;
-		s.storeBranchName = storeBranchName;
+		s.id = storeId;
+		s.poiId = storePoiId;
+		s.name = storeBusinessName;
+		s.province = storeProvince;
+		s.city = storeCity;
 		List<Object> domain = gd.getDomain(s);
 		return storeOpeRepository.getStoreList(conn, domain, count, offset);
 	}
-	
+
 	/**
 	 * @描述 创建营业员
 	 * @param conn
@@ -170,16 +169,16 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Assistant setAssistant(DruidPooledConnection conn, Long assistantId, String assistantName, 
+	public StoreSaler setAssistant(DruidPooledConnection conn, Long assistantId, String assistantName,
 			String assistantStorePoiId) throws Exception {
-		Assistant a = new Assistant();
-		a.assistantId = assistantId;
-		a.assistantName = assistantName;
-		a.assistantStorePoiId = assistantStorePoiId;
+		StoreSaler a = new StoreSaler();
+		a.id = assistantId;
+		a.name = assistantName;
+		a.poiId = assistantStorePoiId;
 		assistantOpeRepository.insert(conn, a);
 		return a;
 	}
-	
+
 	/**
 	 * @描述 创建门店
 	 * @param conn
@@ -192,19 +191,19 @@ public class ChannelOpeService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Store setStore(DruidPooledConnection conn, Long storeId, String storePoiId, 
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName) throws Exception {
+	public Store setStore(DruidPooledConnection conn, Long storeId, String storePoiId, String storeBusinessName,
+			String storeProvince, String storeCity, String storeBranchName) throws Exception {
 		Store s = new Store();
-		s.storeId = storeId;
-		s.storePoiId = storePoiId;
-		s.storeBusinessName = storeBusinessName;
-		s.storeProvince = storeProvince;
-		s.storeCity = storeCity;
-		s.storeBranchName = storeBranchName;
+		s.id = storeId;
+		s.poiId = storePoiId;
+		s.name = storeBusinessName;
+		s.province = storeProvince;
+		s.city = storeCity;
+		s.name = storeBranchName;
 		storeOpeRepository.insert(conn, s);
 		return s;
 	}
-	
+
 	/**
 	 * @描述 根据ID清除营业员
 	 * @param conn
@@ -214,9 +213,9 @@ public class ChannelOpeService {
 	 * @throws Exception
 	 */
 	public void delAssistant(DruidPooledConnection conn, Long assistantId) throws Exception {
-		assistantOpeRepository.deleteByKey(conn, "assistant_id", new Object[]{assistantId});
+		assistantOpeRepository.deleteByKey(conn, "assistant_id", new Object[] { assistantId });
 	}
-	
+
 	/**
 	 * @描述 根据ID清除门店
 	 * @param conn
@@ -229,9 +228,9 @@ public class ChannelOpeService {
 	 * @throws Exception
 	 */
 	public void delStore(DruidPooledConnection conn, Long storeId) throws Exception {
-		storeOpeRepository.deleteByKey(conn, "store_id", new Object[]{storeId});
+		storeOpeRepository.deleteByKey(conn, "store_id", new Object[] { storeId });
 	}
-	
+
 	/**
 	 * @描述 修改对应营业员信息
 	 * @param conn
@@ -241,16 +240,16 @@ public class ChannelOpeService {
 	 * @param assistant
 	 * @throws Exception
 	 */
-	public void updateAssistant(DruidPooledConnection conn, Long assistantId, String assistantName, 
-			String assistantStorePoiId,Assistant assistant) throws Exception {
-		Assistant a = new Assistant();
-		a.assistantId = assistantId;
-		a.assistantName = assistantName;
-		a.assistantStorePoiId = assistantStorePoiId;
+	public void updateAssistant(DruidPooledConnection conn, Long assistantId, String assistantName,
+			String assistantStorePoiId, StoreSaler assistant) throws Exception {
+		StoreSaler a = new StoreSaler();
+		a.id = assistantId;
+		a.name = assistantName;
+		a.poiId = assistantStorePoiId;
 		List<Object> domain = gd.getDomain(a);
 		assistantOpeRepository.updateAssistant(conn, domain, assistant);
 	}
-	
+
 	/**
 	 * @描述 修改对应门店信息
 	 * @param conn
@@ -263,15 +262,14 @@ public class ChannelOpeService {
 	 * @param store
 	 * @throws Exception
 	 */
-	public void updateStore(DruidPooledConnection conn, Long storeId, String storePoiId, 
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName,Store store) throws Exception {
+	public void updateStore(DruidPooledConnection conn, Long storeId, String storePoiId, String storeBusinessName,
+			String storeProvince, String storeCity, String storeBranchName, Store store) throws Exception {
 		Store s = new Store();
-		s.storeId = storeId;
-		s.storePoiId = storePoiId;
-		s.storeBusinessName = storeBusinessName;
-		s.storeProvince = storeProvince;
-		s.storeCity = storeCity;
-		s.storeBranchName = storeBranchName;
+		s.id = storeId;
+		s.poiId = storePoiId;
+		s.name = storeBusinessName;
+		s.province = storeProvince;
+		s.city = storeCity;
 		List<Object> domain = gd.getDomain(s);
 		storeOpeRepository.updateStore(conn, domain, store);
 	}
