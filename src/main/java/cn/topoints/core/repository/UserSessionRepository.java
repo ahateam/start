@@ -1,9 +1,9 @@
 package cn.topoints.core.repository;
 
 import cn.topoints.core.domain.UserSession;
-import cn.topoints.utils.data.rds.RDSRepository;
+import cn.topoints.utils.data.ots.OTSRepository;
 
-public class UserSessionRepository extends RDSRepository<UserSession> {
+public class UserSessionRepository extends OTSRepository<UserSession> {
 
 	private static UserSessionRepository ins;
 

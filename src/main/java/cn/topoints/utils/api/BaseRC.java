@@ -26,7 +26,7 @@ public interface BaseRC {
 
 	static final RC SERVER_DEFAULT_ERROR = new RC("000013", "server default error");// 默认错误
 
-	static final RC SERVER_OBJECT_NULL = new RC("000014", "server object null");// 对象空了
+	static final RC SERVER_OBJECT_NULL = new RC("000014", "object is null");// 对象空了
 
 	// 常用Repository层的错误
 

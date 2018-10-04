@@ -19,6 +19,7 @@ import cn.topoints.utils.api.http.APIResponse;
 import cn.topoints.utils.api.http.Controller;
 import cn.topoints.utils.data.DataSource;
 import cn.topoints.utils.data.DataSourceUtils;
+import cn.topoints.utils.data.ots.OTSAutoCloseableClient;
 
 public class UserController extends Controller {
 
@@ -34,12 +35,14 @@ public class UserController extends Controller {
 	}
 
 	private DataSource dsRds;
+	private DataSource dsOts;
 	private UserService userService;
 
 	private UserController(String node) {
 		super(node);
 		try {
 			dsRds = DataSourceUtils.getDataSource("rdsDefault");
+			dsOts = DataSourceUtils.getDataSource("otsDefault");
 
 			userService = UserService.getInstance();
 		} catch (Exception e) {
@@ -71,9 +74,9 @@ public class UserController extends Controller {
 		}
 	}
 
-	private LoginBo login(DruidPooledConnection conn, User user) throws Exception {
+	private LoginBo login(DruidPooledConnection conn, OTSAutoCloseableClient client, User user) throws Exception {
 		Date loginTime = new Date();
-		UserSession userSession = userService.putUserSession(conn, user.appId, user.id, user.level, loginTime,
+		UserSession userSession = userService.putUserSession(client, user.appId, user.id, user.level, loginTime,
 				IDUtils.getHexSimpleId());
 
 		LoginBo ret = new LoginBo();
@@ -111,10 +114,11 @@ public class UserController extends Controller {
 		String name = Param.getString(c, "name");
 		String pwd = Param.getString(c, "pwd");
 
-		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection();
+				OTSAutoCloseableClient client = (OTSAutoCloseableClient) dsOts.openConnection()) {
 			User user = userService.registByNameAndPwd(conn, appId, name, pwd);
 			// 如果成功注册，则写入Session后，返回LoginBo
-			LoginBo loginBo = login(conn, user);
+			LoginBo loginBo = login(conn, client, user);
 			// 返回登录业务对象
 			return APIResponse.getNewSuccessResp(loginBo);
 		}
@@ -139,10 +143,11 @@ public class UserController extends Controller {
 		String name = Param.getString(c, "name");
 		String pwd = Param.getString(c, "pwd");
 
-		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection();
+				OTSAutoCloseableClient client = (OTSAutoCloseableClient) dsOts.openConnection()) {
 			User user = userService.loginByNameAndPwd(conn, appId, name, pwd);
 			// 如果成功登录，则写入Session后，返回LoginBo
-			LoginBo loginBo = login(conn, user);
+			LoginBo loginBo = login(conn, client, user);
 			// 返回登录业务对象
 			return APIResponse.getNewSuccessResp(loginBo);
 		}
@@ -169,8 +174,9 @@ public class UserController extends Controller {
 		anonymous.nickname = "";
 
 		// 写入匿名用户Session后，返回LoginBo
-		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
-			LoginBo loginBo = login(conn, anonymous);
+		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection();
+				OTSAutoCloseableClient client = (OTSAutoCloseableClient) dsOts.openConnection()) {
+			LoginBo loginBo = login(conn, client, anonymous);
 			return APIResponse.getNewSuccessResp(loginBo);
 		}
 	}

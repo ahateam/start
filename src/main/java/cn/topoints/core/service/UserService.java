@@ -6,15 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.alibaba.fastjson.JSONArray;
 
 import cn.topoints.core.domain.User;
 import cn.topoints.core.domain.UserSession;
 import cn.topoints.core.repository.UserRepository;
 import cn.topoints.core.repository.UserSessionRepository;
+import cn.topoints.core.repository.UserTagsRepository;
 import cn.topoints.utils.CacheCenter;
 import cn.topoints.utils.IDUtils;
 import cn.topoints.utils.api.BaseRC;
 import cn.topoints.utils.api.ServerException;
+import cn.topoints.utils.data.ots.OTSAutoCloseableClient;
 
 public class UserService {
 
@@ -31,17 +34,19 @@ public class UserService {
 
 	private UserRepository userRepository;
 	private UserSessionRepository userSessionRepository;
+	private UserTagsRepository userTagsRepository;
 
 	private UserService() {
 		try {
 			userRepository = UserRepository.getInstance();
 			userSessionRepository = UserSessionRepository.getInstance();
+			userTagsRepository = UserTagsRepository.getInstance();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 	}
 
-	public UserSession putUserSession(DruidPooledConnection conn, Long appId, Long userId, Byte userLevel,
+	public UserSession putUserSession(OTSAutoCloseableClient client, Long appId, Long userId, Byte userLevel,
 			Date loginTime, String loginToken) throws Exception {
 
 		UserSession ret = new UserSession();
@@ -51,34 +56,26 @@ public class UserService {
 		ret.loginTime = loginTime;
 		ret.loginToken = loginToken;
 
-		// 先放入Session缓存
+		// 先放入Session缓存，再放入存储
 		CacheCenter.SESSION_CACHE.put(userId, ret);
-
-		UserSession exist = userSessionRepository.getByKey(conn, "user_id", userId);
-		if (exist == null) {
-			// 创建
-			userSessionRepository.insert(conn, ret);
-		} else {
-			// 更新
-			userSessionRepository.updateByKey(conn, "user_id", userId, ret, true);
-		}
+		userSessionRepository.putObject(client, ret, true);
 		return ret;
 	}
 
-	public UserSession getUserSessionById(DruidPooledConnection conn, Long userId) throws Exception {
+	public UserSession getUserSession(OTSAutoCloseableClient client, Long appId, Long userId) throws Exception {
 		// 先从缓存中获取
 		UserSession session = null;
 		try {
 			session = CacheCenter.SESSION_CACHE.get(userId);
 		} catch (Exception e) {
-			session = userSessionRepository.getByKey(conn, "user_id", userId);
+			session = userSessionRepository.getByKey(client, appId, userId);
 		}
 		return session;
 	}
 
-	public void clearUserSessionById(DruidPooledConnection conn, Long userId) throws Exception {
+	public void clearUserSessionById(OTSAutoCloseableClient client, Long appId, Long userId) throws Exception {
 		CacheCenter.SESSION_CACHE.invalidate(userId);
-		userSessionRepository.deleteByKey(conn, "user_id", userId);
+		userSessionRepository.deleteByKey(client, appId, userId);
 	}
 
 	/**
@@ -94,7 +91,6 @@ public class UserService {
 	 * @return 刚注册的用户对象
 	 */
 	public User registByNameAndPwd(DruidPooledConnection conn, Long appId, String name, String pwd) throws Exception {
-
 		// 用户不存在
 		User newUser = new User();
 		newUser.id = IDUtils.getSimpleId();
@@ -203,5 +199,18 @@ public class UserService {
 			}
 
 		}
+	}
+
+	public JSONArray getUserTags(DruidPooledConnection conn, Long userId, String tagKey) throws Exception {
+		return userTagsRepository.getTags(conn, userId, tagKey);
+	}
+
+	public void addUserTags(DruidPooledConnection conn, Long userId, String tagKey, JSONArray tags) throws Exception {
+		userTagsRepository.addTags(conn, userId, tagKey, tags);
+	}
+
+	public void removeUserTags(DruidPooledConnection conn, Long userId, String tagKey, JSONArray tags)
+			throws Exception {
+		userTagsRepository.removeTags(conn, userId, tagKey, tags);
 	}
 }
