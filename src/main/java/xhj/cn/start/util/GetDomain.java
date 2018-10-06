@@ -17,7 +17,7 @@ public class GetDomain {
 		List<Object> all = new ArrayList<Object>();
 		//获取对象变量
 		Field[] fields = obj.getClass().getDeclaredFields();
-		//循环判断并获取对象变量名与变量值
+		//循环判断并获取对象变量名与变量值（暂定String型和long型）
 		for(Field f : fields) {
 			if(f.getGenericType().toString().equals("class java.lang.String")) {
 				if(f.get(obj) != null && !f.get(obj).equals("")) {

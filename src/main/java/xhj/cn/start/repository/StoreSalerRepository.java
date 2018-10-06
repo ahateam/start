@@ -34,6 +34,7 @@ public class StoreSalerRepository extends RDSRepository<StoreSaler> {
 	public StoreSaler getAssistantByKeys(DruidPooledConnection conn,List all) throws Exception {
 		return getByKeys(conn, (String[])all.get(0), (Object[])all.get(1));
 	}
+	
 	/**
 	 * @描述 根据ID查询对应营业员
 	 * @param conn
