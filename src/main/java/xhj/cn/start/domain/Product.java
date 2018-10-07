@@ -10,7 +10,7 @@ import cn.topoints.utils.data.rds.RDSAnnID;
  */
 @RDSAnnEntity(alias = "tb_product")
 public class Product {
-	
+
 	/**
 	 * 商品ID
 	 */
@@ -52,5 +52,6 @@ public class Product {
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
 	public Integer productPresell;
+
 
 }

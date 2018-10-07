@@ -8,6 +8,10 @@ import cn.topoints.utils.data.rds.RDSAnnIndex;
 @RDSAnnEntity(alias = "tb_store_saler")
 public class StoreSaler {
 
+	public static final Byte LEVEL_1 = 1;
+	public static final Byte LEVEL_2 = 2;
+	public static final Byte LEVEL_3 = 3;
+	
 	/**
 	 * 所属门店ID
 	 */
@@ -33,6 +37,20 @@ public class StoreSaler {
 	 */
 	@RDSAnnField(column = "VARCHAR(16)")
 	public String name;
+
+	/**
+	 * 店员等级，只支持3级
+	 */
+	@RDSAnnField(column = RDSAnnField.BYTE)
+	public Byte level;
+
+	/**
+	 * 上级店员编号</br>
+	 * 带索引
+	 */
+	@RDSAnnIndex
+	@RDSAnnField(column = RDSAnnField.ID)
+	public Long leaderId;
 
 	/**
 	 * 营业员所属门店对应poi_id

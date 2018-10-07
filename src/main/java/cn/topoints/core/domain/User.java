@@ -140,7 +140,8 @@ public class User {
 	public String signature;
 
 	/**
-	 * 牛逼的JSON
+	 * 牛逼的JSON</br>
+	 * 
 	 */
 	@RDSAnnField(column = RDSAnnField.JSON)
 	public String tags;

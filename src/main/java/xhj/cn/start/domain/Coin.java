@@ -16,10 +16,9 @@ public class Coin {
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
 	public Long userId;
-	/**
-	 * 积分值
-	 */
+
+	
 	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer integral;
+	public Integer remainingAmount;
 
 }

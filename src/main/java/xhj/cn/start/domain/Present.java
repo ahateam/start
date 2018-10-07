@@ -12,47 +12,69 @@ import cn.topoints.utils.data.rds.RDSAnnID;
  */
 @RDSAnnEntity(alias = "tb_present")
 public class Present {
-	
+
+	public static final Byte TYPE_VIRTUAL = 0;
+	public static final Byte TYPE_OBJECT = 1;
+
 	/**
 	 * 礼品ID
 	 */
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
-	public Long presentId;
+	public Long id;
+
 	/**
-	 * 礼品名称
+	 * 标题
 	 */
-	@RDSAnnField(column = "VARCHAR(32)")
-	public String presentName;
+	@RDSAnnField(column = "VARCHAR(128)")
+	public String title;
+
 	/**
-	 * 礼品描述
+	 * 描述
 	 */
-	@RDSAnnField(column = RDSAnnField.TEXT)
-	public String presentMessage;
+	@RDSAnnField(column = RDSAnnField.SHORT_TEXT)
+	public String discription;
+
 	/**
-	 * 礼品类型
+	 * 状态
 	 */
-	@RDSAnnField(column = "VARCHAR(32)")
-	public String presentType;
+	@RDSAnnField(column = RDSAnnField.BYTE)
+	public Byte status;
+
 	/**
-	 * 礼品有效时间（始）
+	 * 创建时间
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data presentStartTime;
+	public Data createTime;
+
 	/**
-	 * 礼品有效时间（终）
+	 * 有效时间（始）
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data presentEndTime;
+	public Data startTime;
+	/**
+	 * 有效时间（终）
+	 */
+	@RDSAnnField(column = RDSAnnField.TIME)
+	public Data endTime;
+
 	/**
 	 * 礼品库存
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer presentRepertory;
+	public Integer amount;
+
 	/**
-	 * 虚拟（1）/实物（0）
+	 * 礼品库存
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer presentDummy;
+	public Integer remainingAmount;
 
+	/**
+	 * 牛逼的JSON</br>
+	 * store，对应门店信息</br>
+	 * type，对应分类信息（虚拟，实物，落地页）</br>
+	 */
+	@RDSAnnField(column = RDSAnnField.JSON)
+	public String tags;
 }

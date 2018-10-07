@@ -12,6 +12,10 @@ import cn.topoints.utils.data.rds.RDSAnnIndex;
 @RDSAnnEntity(alias = "tb_distributor")
 public class Distributor {
 
+	public static final Byte LEVEL_1 = 1;
+	public static final Byte LEVEL_2 = 2;
+	public static final Byte LEVEL_3 = 3;
+
 	/**
 	 * 分销员ID
 	 */
