@@ -1,7 +1,5 @@
 package xhj.cn.start.repository;
 
-import java.util.List;
-
 import com.alibaba.druid.pool.DruidPooledConnection;
 
 import cn.topoints.utils.api.ServerException;
@@ -30,18 +28,19 @@ public class CoinRepository extends RDSRepository<Coin> {
 	 * @return
 	 * @throws ServerException
 	 */
-	public Coin getAssistantById(DruidPooledConnection conn,Long useId) throws ServerException {
+	public Coin getCoinById(DruidPooledConnection conn,Long useId) throws ServerException {
 		return get(conn, "where user_id = ?", new Object[] {useId});
 	}
 	
 	/**
-	 * @描述 根据要求修改用户积分
+	 * @描述 修改对应用户积分
 	 * @param conn
-	 * @param StoreSaler
-	 * @throws Exception
+	 * @param useId
+	 * @param coin
+	 * @throws ServerException
 	 */
-	public void updateAssistant(DruidPooledConnection conn,List all, Coin coin) throws Exception {
-		updateByKeys(conn, (String[])all.get(0), (Object[])all.get(1), coin, true);
+	public void updateCoinById(DruidPooledConnection conn,Long useId,Coin coin) throws ServerException {
+		update(conn, "where usee_id = ?", new Object[] {useId}, coin, true);
 	}
 
 }

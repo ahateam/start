@@ -1,5 +1,7 @@
 package xhj.cn.start.domain;
 
+import java.util.Date;
+
 import cn.topoints.utils.data.rds.RDSAnnEntity;
 import cn.topoints.utils.data.rds.RDSAnnField;
 import cn.topoints.utils.data.rds.RDSAnnID;
@@ -16,42 +18,52 @@ public class Product {
 	 */
 	@RDSAnnID
 	@RDSAnnField(column = RDSAnnField.ID)
-	public Long productId;
+	public Long id;
 	/**
-	 * 商品名称
+	 * 标题
 	 */
 	@RDSAnnField(column = "VARCHAR(32)")
-	public String productName;
+	public String title;
 	/**
-	 * 商品价格
+	 * 价格
 	 */
 	@RDSAnnField(column = RDSAnnField.DOUBLE)
-	public Double productPrice;
+	public Double price;
 	/**
 	 * 商品类型
 	 */
 	@RDSAnnField(column = "VARCHAR(32)")
-	public String productType;
+	public String type;
 	/**
-	 * 商品描述
+	 * 描述
 	 */
 	@RDSAnnField(column = RDSAnnField.TEXT)
-	public String productMessage;
+	public String discription;
 	/**
 	 * 商品库存
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer productRepertory;
+	public Integer amount;
+	
 	/**
-	 * 是否精选（是1/否0）
+	 * 商品剩余库存
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer productSift;
+	public Integer remainingAmount;
+	
 	/**
-	 * 是否预售（是1/否0）
+	 * 创建时间
 	 */
-	@RDSAnnField(column = RDSAnnField.INTEGER)
-	public Integer productPresell;
+	@RDSAnnField(column = RDSAnnField.TIME)
+	public Date createTime;
+	
+	/**
+	 * 牛逼的JSON</br>
+	 * store，对应门店信息</br>
+	 * type，对应分类信息（虚拟，实物，落地页）</br>
+	 */
+	@RDSAnnField(column = RDSAnnField.JSON)
+	public String tags;
 
 
 }

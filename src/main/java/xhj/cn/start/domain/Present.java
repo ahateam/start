@@ -1,6 +1,6 @@
 package xhj.cn.start.domain;
 
-import javax.xml.crypto.Data;
+import java.util.Date;
 
 import cn.topoints.utils.data.rds.RDSAnnEntity;
 import cn.topoints.utils.data.rds.RDSAnnField;
@@ -45,18 +45,18 @@ public class Present {
 	 * 创建时间
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data createTime;
+	public Date createTime;
 
 	/**
 	 * 有效时间（始）
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data startTime;
+	public Date startTime;
 	/**
 	 * 有效时间（终）
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data endTime;
+	public Date endTime;
 
 	/**
 	 * 礼品库存
@@ -65,7 +65,7 @@ public class Present {
 	public Integer amount;
 
 	/**
-	 * 礼品库存
+	 * 礼品剩余库存
 	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
 	public Integer remainingAmount;

@@ -51,5 +51,13 @@ public class Store {
 	 */
 	@RDSAnnField(column = "VARCHAR(64)")
 	public String ticket;
+	
+	/**
+	 * 牛逼的JSON</br>
+	 * store，对应门店信息</br>
+	 * type，对应分类信息（虚拟，实物，落地页）</br>
+	 */
+	@RDSAnnField(column = RDSAnnField.JSON)
+	public String tags;
 
 }

@@ -17,7 +17,9 @@ public class Coin {
 	@RDSAnnField(column = RDSAnnField.ID)
 	public Long userId;
 
-	
+	/**
+	 * 余额
+	 */
 	@RDSAnnField(column = RDSAnnField.INTEGER)
 	public Integer remainingAmount;
 
