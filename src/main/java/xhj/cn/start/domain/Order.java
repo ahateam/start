@@ -53,6 +53,16 @@ public class Order {
 	@RDSAnnField(column = RDSAnnField.BYTE)
 	public Byte send;
 	/**
+	 * 订单发货省份
+	 */
+	@RDSAnnField(column = "VARCHAR(16)")
+	public String province;
+	/**
+	 * 订单发货城市
+	 */
+	@RDSAnnField(column = "VARCHAR(16)")
+	public String city;
+	/**
 	 * 订单发货地址
 	 */
 	@RDSAnnField(column = "VARCHAR(128)")

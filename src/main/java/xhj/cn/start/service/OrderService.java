@@ -19,7 +19,7 @@ import xhj.cn.start.util.GetDomain;
 
 public class OrderService {
 	
-	private static Logger log = LoggerFactory.getLogger(StoreService.class);
+	private static Logger log = LoggerFactory.getLogger(OrderService.class);
 
 	private static OrderService ins;
 
@@ -97,7 +97,7 @@ public class OrderService {
 	}
 	
 	/**
-	 * @描述 添加订单并执行积分操作记录捆绑
+	 * @描述 添加订单并执行积分操作记录捆绑（功能暂未完成，后续完善）
 	 * @param conn
 	 * @param userId
 	 * @param title
@@ -106,7 +106,8 @@ public class OrderService {
 	 * @param pay
 	 * @throws Exception
 	 */
-	public void setOrderAndCoinRec(DruidPooledConnection conn,Long userId,String title,Double price,Integer coin,Byte pay) throws Exception {
+	public void setOrderAndCoinRec(DruidPooledConnection conn,Long userId,String title,Double price,
+			Integer coin,Byte pay,String province,String city,String address) throws Exception {
 		Order o = new Order();
 		CoinRecord c = new CoinRecord();
 		
@@ -120,6 +121,9 @@ public class OrderService {
 		o.price = price;
 		o.coin = coin;
 		o.pay = pay;
+		o.province = province;
+		o.city = city;
+		o.address = address;
 		o.send = Order.SEND_OFF;     //订单创建时默认为未发货状态
 		o.creatTime = new Date();
 		o.coinrecId = coinrecId;
@@ -147,7 +151,8 @@ public class OrderService {
 	 * @param pay
 	 * @throws Exception
 	 */
-	public void setOrder(DruidPooledConnection conn,Long userId,String title,Double price,Integer coin,Byte pay) throws Exception {
+	public void setOrder(DruidPooledConnection conn,Long userId,String title,Double price,Integer coin,
+			Byte pay,String province,String city,String address) throws Exception {
 		Order o = new Order();
 		o.id = IDUtils.getSimpleId();
 		o.userId = userId;
@@ -155,6 +160,9 @@ public class OrderService {
 		o.price = price;
 		o.coin = coin;
 		o.pay = pay;
+		o.province = province;
+		o.city = city;
+		o.address = address;
 		o.send = Order.SEND_OFF;     //订单创建时默认为未发货状态
 		o.creatTime = new Date();
 		o.coinrecId = 0L;

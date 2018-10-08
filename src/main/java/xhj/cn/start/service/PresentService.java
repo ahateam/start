@@ -18,7 +18,7 @@ import xhj.cn.start.util.GetDomain;
 public class PresentService {
 	
 	
-	private static Logger log = LoggerFactory.getLogger(StoreService.class);
+	private static Logger log = LoggerFactory.getLogger(PresentService.class);
 
 	private static PresentService ins;
 

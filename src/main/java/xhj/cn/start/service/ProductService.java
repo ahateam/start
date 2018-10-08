@@ -17,7 +17,7 @@ import xhj.cn.start.util.GetDomain;
 
 public class ProductService {
 	
-	private static Logger log = LoggerFactory.getLogger(StoreService.class);
+	private static Logger log = LoggerFactory.getLogger(ProductService.class);
 
 	private static ProductService ins;
 
