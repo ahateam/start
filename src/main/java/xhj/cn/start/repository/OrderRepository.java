@@ -7,7 +7,6 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import cn.topoints.utils.api.ServerException;
 import cn.topoints.utils.data.rds.RDSRepository;
 import xhj.cn.start.domain.Order;
-import xhj.cn.start.domain.Product;
 
 public class OrderRepository extends RDSRepository<Order> {
 	

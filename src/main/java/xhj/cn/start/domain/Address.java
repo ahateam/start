@@ -1,5 +1,6 @@
 package xhj.cn.start.domain;
 
+import cn.topoints.utils.data.rds.RDSAnnEntity;
 import cn.topoints.utils.data.rds.RDSAnnField;
 import cn.topoints.utils.data.rds.RDSAnnID;
 
@@ -7,6 +8,7 @@ import cn.topoints.utils.data.rds.RDSAnnID;
  * 用户保存地址
  *
  */
+@RDSAnnEntity(alias = "tb_address")
 public class Address {
 	/**
 	 * ID
