@@ -7,6 +7,7 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import cn.topoints.utils.api.ServerException;
 import cn.topoints.utils.data.rds.RDSRepository;
 import xhj.cn.start.domain.Order;
+import xhj.cn.start.domain.Product;
 
 public class OrderRepository extends RDSRepository<Order> {
 	
@@ -69,6 +70,19 @@ public class OrderRepository extends RDSRepository<Order> {
 	 */
 	public List<Order> getOrderBySend(DruidPooledConnection conn,Byte pay,Byte send,Integer count,Integer offset) throws ServerException{
 		return getList(conn, "where pay = ? and send = ?", new Object[] {pay,send}, count, offset);
+	}
+	
+	/**
+	 * @描述 根据订单标题模糊查询订单列表
+	 * @param conn
+	 * @param title
+	 * @param count
+	 * @param offset
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Order> getOrderLikeTitle(DruidPooledConnection conn,String title,Integer count,Integer offset) throws Exception{
+		return getList(conn, "WHERE title like '%"+title+"%'", null, count, offset);
 	}
 
 }

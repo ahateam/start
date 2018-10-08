@@ -1,7 +1,8 @@
 package xhj.cn.start.domain;
 
-import javax.xml.crypto.Data;
+import java.util.Date;
 
+import cn.topoints.utils.data.rds.RDSAnnEntity;
 import cn.topoints.utils.data.rds.RDSAnnField;
 import cn.topoints.utils.data.rds.RDSAnnID;
 
@@ -9,6 +10,7 @@ import cn.topoints.utils.data.rds.RDSAnnID;
  * 金币（积分消费记录）
  *
  */
+@RDSAnnEntity(alias = "tb_coinRecord")
 public class CoinRecord {
 
 	public static final Byte OPERATION_ADD = 0;
@@ -50,5 +52,5 @@ public class CoinRecord {
 	 * 创建时间
 	 */
 	@RDSAnnField(column = RDSAnnField.TIME)
-	public Data createTime;
+	public Date createTime;
 }

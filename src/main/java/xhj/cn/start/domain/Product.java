@@ -22,7 +22,7 @@ public class Product {
 	/**
 	 * 标题
 	 */
-	@RDSAnnField(column = "VARCHAR(32)")
+	@RDSAnnField(column = "VARCHAR(128)")
 	public String title;
 	/**
 	 * 价格
