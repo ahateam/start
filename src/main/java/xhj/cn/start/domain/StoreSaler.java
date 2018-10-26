@@ -66,8 +66,7 @@ public class StoreSaler {
 	
 	/**
 	 * 牛逼的JSON</br>
-	 * store，对应门店信息</br>
-	 * type，对应分类信息（虚拟，实物，落地页）</br>
+	 * 数据未定
 	 */
 	@RDSAnnField(column = RDSAnnField.JSON)
 	public String tags;

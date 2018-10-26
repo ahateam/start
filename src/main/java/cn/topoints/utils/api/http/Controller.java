@@ -42,6 +42,18 @@ public abstract class Controller {
 	}
 
 	/**
+	 * HTTP GET方法
+	 */
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface doGet {
+		public String[] paths();
+
+		// 默认所有的GET方法都不需要验证
+		public boolean verify() default false;
+	}
+
+	/**
 	 * Controller的url根目录节点
 	 */
 	protected String node;
@@ -82,7 +94,26 @@ public abstract class Controller {
 					continue;
 				}
 			}
-
+			// 识别GET
+			{
+				doGet getMethod = m.getAnnotation(doGet.class);
+				if (null != getMethod) {
+					String[] paths = getMethod.paths();
+					if (null == paths || paths.length < 1) {
+						log.info(">>>Method add nothing");
+					} else {
+						for (String path : paths) {
+							if (getMethods.containsKey(path)) {
+								// 如果要添加的path，已经被暂用，则将此方法列入警告
+								warningMethods.put(path, m);
+							} else {
+								getMethods.put(path, new Object[] { m, getMethod.verify() });
+							}
+						}
+					}
+					continue;
+				}
+			}
 		}
 	}
 
@@ -109,6 +140,15 @@ public abstract class Controller {
 				Method m = (Method) ms[0];
 				boolean verify = (boolean) ms[1];
 				execCall(m, verify, context, req, resp);
+				// 已处理，直接返回
+				return;
+			}
+			// 再处理GET
+			ms = getMethods.get(node);
+			if (null != ms) {
+				Method m = (Method) ms[0];
+				boolean verify = (boolean) ms[1];
+				execGet(m, req, resp, context);
 				// 已处理，直接返回
 				return;
 			}
@@ -163,6 +203,7 @@ public abstract class Controller {
 			Throwable targetException = ite.getTargetException();
 			dealException(resp, targetException);
 		} catch (Exception e) {
+			e.printStackTrace();
 			dealException(resp, e);
 		}
 	}
@@ -170,6 +211,7 @@ public abstract class Controller {
 	private void dealException(HttpServerResponse resp, Throwable e) throws IOException {
 		if (e instanceof ServerException) {
 			ServerException serverException = (ServerException) e;
+			e.printStackTrace();
 			// 获取错误码并按APIResponse格式返回
 			doResponseFailure(resp, serverException.getRC(), serverException.getMessage());
 		} else {
@@ -183,19 +225,21 @@ public abstract class Controller {
 		}
 	}
 
-	private void execGet(Method m, HttpServerRequest req, HttpServerResponse resp) throws IOException {
+	private void execGet(Method m, HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws IOException {
 		try {
-			m.invoke(this, req, resp);
+			m.invoke(this, req, resp, context);
 			// 如果调用出现异常，则按HTTP规范直接返回异常信息
 		} catch (InvocationTargetException ite) {
 			// 反射的代理异常，剥壳后才是真实的异常
 			String targetException = ite.getTargetException().getMessage();
 			resp.setStatusCode(500);
 			resp.setStatusMessage(targetException);
+			ite.printStackTrace();
 		} catch (Exception e) {
 			String targetException = e.getMessage();
 			resp.setStatusCode(500);
 			resp.setStatusMessage(targetException);
+			e.printStackTrace();
 		}
 	}
 

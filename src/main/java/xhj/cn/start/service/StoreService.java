@@ -148,7 +148,7 @@ public class StoreService {
 	 * @throws Exception
 	 */
 	public List<Store> getStoreList(DruidPooledConnection conn, Long storeId, String storePoiId,
-			String storeBusinessName, String storeProvince, String storeCity, String storeBranchName, Integer count,
+			String storeBusinessName, String storeProvince, String storeCity, Integer count,
 			Integer offset) throws Exception {
 		Store s = new Store();
 		s.id = storeId;
@@ -192,14 +192,13 @@ public class StoreService {
 	 * @throws Exception
 	 */
 	public Store setStore(DruidPooledConnection conn, Long storeId, String storePoiId, String storeBusinessName,
-			String storeProvince, String storeCity, String storeBranchName) throws Exception {
+			String storeProvince, String storeCity) throws Exception {
 		Store s = new Store();
 		s.id = storeId;
 		s.poiId = storePoiId;
 		s.name = storeBusinessName;
 		s.province = storeProvince;
 		s.city = storeCity;
-		s.name = storeBranchName;
 		storeOpeRepository.insert(conn, s);
 		return s;
 	}
@@ -263,7 +262,7 @@ public class StoreService {
 	 * @throws Exception
 	 */
 	public void updateStore(DruidPooledConnection conn, Long storeId, String storePoiId, String storeBusinessName,
-			String storeProvince, String storeCity, String storeBranchName, Store store) throws Exception {
+			String storeProvince, String storeCity, Store store) throws Exception {
 		Store s = new Store();
 		s.id = storeId;
 		s.poiId = storePoiId;

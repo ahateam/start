@@ -76,6 +76,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "getStoreByKeys")
 	public APIResponse getStoreByKeys(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long storeId = Param.getLongDFLT(c, "storeId", null);
@@ -97,6 +98,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "getAllAssistantList")
 	public APIResponse getAllAssistantList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Integer count = Param.getInteger(c, "count");
@@ -118,6 +120,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "getAllStoreList")
 	public APIResponse getAllStoreList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Integer count = Param.getInteger(c, "count");
@@ -145,6 +148,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "getAssistantList")
 	public APIResponse getAssistantList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员对应信息
@@ -168,7 +172,7 @@ public class StoreController extends Controller {
 	}
 
 	/**
-	 * @描述 根据需求获取营业员列表
+	 * @描述 根据需求获取门店列表
 	 * 
 	 * @param storeId
 	 *            门店ID
@@ -180,8 +184,6 @@ public class StoreController extends Controller {
 	 *            门店所在省份
 	 * @param storeCity
 	 *            门店所在城市
-	 * @param storeBranchName
-	 *            分店名
 	 * @param count
 	 *            查询数据条数
 	 * @param offset
@@ -190,6 +192,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "getStoreList")
 	public APIResponse getStoreList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店对应信息
@@ -198,7 +201,6 @@ public class StoreController extends Controller {
 		String storeBusinessName = Param.getStringDFLT(c, "storeBusinessName", null);
 		String storeProvince = Param.getStringDFLT(c, "storeProvince", null);
 		String storeCity = Param.getStringDFLT(c, "storeCity", null);
-		String storeBranchName = Param.getStringDFLT(c, "storeBranchName", null);
 		// 获取分页参数
 		Integer count = Param.getInteger(c, "count");
 		Integer offset = Param.getInteger(c, "offset");
@@ -206,11 +208,11 @@ public class StoreController extends Controller {
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
 			List<Store> storeList = new ArrayList<Store>();
 			if (storeId == null || storePoiId == null || storeBusinessName == null || storeProvince == null
-					|| storeCity == null || storeBranchName == null) {
+					|| storeCity == null) {
 				storeList = channelOpeService.getAllStoreList(conn, count, offset);
 			} else {
-				storeList = channelOpeService.getStoreList(conn, storeId, storePoiId, storeBusinessName, storeProvince,
-						storeCity, storeBranchName, count, offset);
+				storeList = channelOpeService.getStoreList(conn, storeId, storePoiId, storeBusinessName,
+						storeProvince, storeCity, count, offset);
 			}
 			return APIResponse.getNewSuccessResp(storeList);
 		}
@@ -229,6 +231,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "setAssistant")
 	public APIResponse setAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员对应信息
@@ -260,6 +263,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "setStore")
 	public APIResponse setStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店对应信息
@@ -268,10 +272,8 @@ public class StoreController extends Controller {
 		String storeBusinessName = Param.getString(c, "storeBusinessName");
 		String storeProvince = Param.getString(c, "storeProvince");
 		String storeCity = Param.getString(c, "storeCity");
-		String storeBranchName = Param.getString(c, "storeBranchName");
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
-			channelOpeService.setStore(conn, storeId, storePoiId, storeBusinessName, storeProvince, storeCity,
-					storeBranchName);
+			channelOpeService.setStore(conn, storeId, storePoiId, storeBusinessName, storeProvince, storeCity);
 			return APIResponse.getNewSuccessResp(storeId);
 		}
 	}
@@ -285,6 +287,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "delAssistant")
 	public APIResponse delAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员ID
@@ -304,6 +307,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "delStore")
 	public APIResponse delStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店ID
@@ -331,6 +335,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "updateAssistant")
 	public APIResponse updateAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取修改范围
@@ -379,6 +384,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
+	@doCall(paths = "updateStore")
 	public APIResponse updateStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取修改范围
@@ -387,20 +393,18 @@ public class StoreController extends Controller {
 		String updateStoreBusinessName = Param.getStringDFLT(c, "updateStoreBusinessName", null);
 		String updateStoreProvince = Param.getStringDFLT(c, "updateStoreProvince", null);
 		String updateStoreCity = Param.getStringDFLT(c, "updateStoreCity", null);
-		String updateStoreBranchName = Param.getStringDFLT(c, "updateStoreBranchName", null);
 		// 获取修改信息
 		Store store = new Store();
 		store.name = Param.getString(c, "storeBusinessName");
 		store.province = Param.getString(c, "storeProvince");
 		store.city = Param.getString(c, "storeCity");
-		store.name = Param.getString(c, "storeBranchName");
 		try (DruidPooledConnection conn = (DruidPooledConnection) dsRds.openConnection()) {
 			if (updateStoreId == null && updateStorePoiId == null && updateStoreBusinessName == null
-					&& updateStoreProvince == null && updateStoreCity == null && updateStoreBranchName == null) {
+					&& updateStoreProvince == null && updateStoreCity == null) {
 				log.info("修改范围有误！！");
 			} else {
 				channelOpeService.updateStore(conn, updateStoreId, updateStorePoiId, updateStoreBusinessName,
-						updateStoreProvince, updateStoreCity, updateStoreBranchName, store);
+						updateStoreProvince, updateStoreCity, store);
 			}
 			return APIResponse.getNewSuccessResp();
 		}
