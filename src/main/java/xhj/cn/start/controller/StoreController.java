@@ -54,7 +54,7 @@ public class StoreController extends Controller {
 	 * @return assistant 营业员信息对象
 	 * @throws Exception
 	 */
-	@doCall(paths = "getAssistantById")
+	@POSTAPI(path = "getAssistantById")
 	public APIResponse getAssistantById(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long assistantId = Param.getLong(c, "assistantId");
@@ -76,7 +76,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "getStoreByKeys")
+	@POSTAPI(path = "getStoreByKeys")
 	public APIResponse getStoreByKeys(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long storeId = Param.getLongDFLT(c, "storeId", null);
@@ -98,7 +98,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "getAllAssistantList")
+	@POSTAPI(path = "getAllAssistantList")
 	public APIResponse getAllAssistantList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Integer count = Param.getInteger(c, "count");
@@ -120,7 +120,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "getAllStoreList")
+	@POSTAPI(path = "getAllStoreList")
 	public APIResponse getAllStoreList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Integer count = Param.getInteger(c, "count");
@@ -148,7 +148,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "getAssistantList")
+	@POSTAPI(path = "getAssistantList")
 	public APIResponse getAssistantList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员对应信息
@@ -192,7 +192,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "getStoreList")
+	@POSTAPI(path = "getStoreList")
 	public APIResponse getStoreList(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店对应信息
@@ -211,8 +211,8 @@ public class StoreController extends Controller {
 					|| storeCity == null) {
 				storeList = channelOpeService.getAllStoreList(conn, count, offset);
 			} else {
-				storeList = channelOpeService.getStoreList(conn, storeId, storePoiId, storeBusinessName,
-						storeProvince, storeCity, count, offset);
+				storeList = channelOpeService.getStoreList(conn, storeId, storePoiId, storeBusinessName, storeProvince,
+						storeCity, count, offset);
 			}
 			return APIResponse.getNewSuccessResp(storeList);
 		}
@@ -231,7 +231,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "setAssistant")
+	@POSTAPI(path = "setAssistant")
 	public APIResponse setAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员对应信息
@@ -263,7 +263,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "setStore")
+	@POSTAPI(path = "setStore")
 	public APIResponse setStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店对应信息
@@ -287,7 +287,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "delAssistant")
+	@POSTAPI(path = "delAssistant")
 	public APIResponse delAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取营业员ID
@@ -307,7 +307,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "delStore")
+	@POSTAPI(path = "delStore")
 	public APIResponse delStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取门店ID
@@ -335,7 +335,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "updateAssistant")
+	@POSTAPI(path = "updateAssistant")
 	public APIResponse updateAssistant(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取修改范围
@@ -384,7 +384,7 @@ public class StoreController extends Controller {
 	 * 
 	 * @throws Exception
 	 */
-	@doCall(paths = "updateStore")
+	@POSTAPI(path = "updateStore")
 	public APIResponse updateStore(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		// 获取修改范围
