@@ -22,6 +22,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import xhj.cn.custom.controller.HttpTestController;
 import xhj.cn.custom.controller.WxEventController;
 import xhj.cn.start.controller.StoreController;
 import xhj.cn.start.controller.TestController;
@@ -45,6 +46,8 @@ public class MainVerticle extends AbstractVerticle {
 		//putCtrlInMap(ctrlMap, UserController.getInstance("user"));
 		
 		putCtrlInMap(ctrlMap, WxEventController.getInstance("wx"));
+		
+		putCtrlInMap(ctrlMap, HttpTestController.getInstance("test"));
 
 	}
 
