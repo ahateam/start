@@ -37,7 +37,7 @@ public class Test {
 
 			// RDSUtils.dropTableByEntity(dsRds, Tunnel.class);
 			
-			 RDSUtils.createTableByEntity(dsRds, Store.class);
+//			 RDSUtils.createTableByEntity(dsRds, Store.class);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

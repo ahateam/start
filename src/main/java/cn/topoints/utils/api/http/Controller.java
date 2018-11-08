@@ -29,28 +29,51 @@ public abstract class Controller {
 
 	private static Logger log = LoggerFactory.getLogger(Controller.class);
 
-	/**
-	 * API方法
-	 */
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	protected @interface doCall {
-		public String[] paths();
-
-		// 默认所有的方法都需要验证，只有标记false的不验证，如登录，注册等方法
-		public boolean verify() default true;
-	}
+	public static final byte TYPE_GET = 0;
+	public static final byte TYPE_POST = 1;
+	public static final byte TYPE_GETAPI = 2;
+	public static final byte TYPE_POSTAPI = 3;
 
 	/**
 	 * HTTP GET方法
 	 */
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
-	protected @interface doGet {
-		public String[] paths();
+	protected @interface GET {
+		public String path();
+	}
 
-		// 默认所有的GET方法都不需要验证
-		public boolean verify() default false;
+	/**
+	 * HTTP POST方法
+	 */
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface POST {
+		public String path();
+	}
+
+	/**
+	 * GET API方法
+	 */
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface GETAPI {
+		public String path();
+
+		// 默认需要验证，如登录，注册等方法
+		public boolean verify() default true;
+	}
+
+	/**
+	 * POST API方法
+	 */
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	protected @interface POSTAPI {
+		public String path();
+
+		// 默认需要验证，如登录，注册等方法
+		public boolean verify() default true;
 	}
 
 	/**
@@ -58,62 +81,68 @@ public abstract class Controller {
 	 */
 	protected String node;
 
-	protected Map<String, Object[]> getMethods = new HashMap<String, Object[]>();
-
-	protected Map<String, Object[]> postMethods = new HashMap<String, Object[]>();
-
-	protected Map<String, Object[]> callMethods = new HashMap<String, Object[]>();
+	protected Map<String, Object[]> methods = new HashMap<String, Object[]>();
 
 	/**
 	 * 无效，并被警告的方法
 	 */
 	protected Map<String, Method> warningMethods = new HashMap<String, Method>();
 
+	private void addMethodIntoMap(Method m, String path, byte type, boolean verify) {
+		if (StringUtils.isBlank(path)) {
+			log.info(">>>Method add nothing");
+		} else {
+			if (methods.containsKey(path)) {
+				// 如果要添加的path，已经被暂用，则将此方法列入警告
+				warningMethods.put(path, m);
+			} else {
+				methods.put(path, new Object[] { m, type, verify });
+			}
+		}
+	}
+
 	protected Controller(String node) {
 		this.node = node;
 
 		Method[] ms = this.getClass().getMethods();
 		for (Method m : ms) {
-			// 识别CALL
-			{
-				doCall callMethod = m.getAnnotation(doCall.class);
-				if (null != callMethod) {
-					String[] paths = callMethod.paths();
-					if (null == paths || paths.length < 1) {
-						log.info(">>>Method add nothing");
-					} else {
-						for (String path : paths) {
-							if (callMethods.containsKey(path)) {
-								// 如果要添加的path，已经被暂用，则将此方法列入警告
-								warningMethods.put(path, m);
-							} else {
-								callMethods.put(path, new Object[] { m, callMethod.verify() });
-							}
-						}
-					}
-					continue;
-				}
-			}
+
 			// 识别GET
 			{
-				doGet getMethod = m.getAnnotation(doGet.class);
-				if (null != getMethod) {
-					String[] paths = getMethod.paths();
-					if (null == paths || paths.length < 1) {
-						log.info(">>>Method add nothing");
-					} else {
-						for (String path : paths) {
-							if (getMethods.containsKey(path)) {
-								// 如果要添加的path，已经被暂用，则将此方法列入警告
-								warningMethods.put(path, m);
-							} else {
-								getMethods.put(path, new Object[] { m, getMethod.verify() });
-							}
-						}
-					}
+				GET method = m.getAnnotation(GET.class);
+				if (null != method) {
+					addMethodIntoMap(m, method.path(), TYPE_GET, false);
 					continue;
 				}
 			}
+
+			// 识别POST
+			{
+				POST method = m.getAnnotation(POST.class);
+				if (null != method) {
+					addMethodIntoMap(m, method.path(), TYPE_POST, false);
+					continue;
+				}
+			}
+
+			// 识别GETAPI
+			{
+				GETAPI method = m.getAnnotation(GETAPI.class);
+				if (null != method) {
+					addMethodIntoMap(m, method.path(), TYPE_GETAPI, method.verify());
+					continue;
+				}
+			}
+
+			// 识别POSTAPI
+			{
+				POSTAPI method = m.getAnnotation(POSTAPI.class);
+				if (null != method) {
+					addMethodIntoMap(m, method.path(), TYPE_POSTAPI, method.verify());
+					continue;
+				}
+			}
+
 		}
 	}
 
@@ -129,75 +158,159 @@ public abstract class Controller {
 	 */
 	public void exec(String[] nodes, RoutingContext context, HttpServerRequest req, HttpServerResponse resp)
 			throws IOException {
-
 		if (null != nodes && nodes.length > 2) {
 			// 有方法节点
 			String node = nodes[2];
 
-			// 先处理CALL
-			Object[] ms = callMethods.get(node);
+			Object[] ms = methods.get(node);
 			if (null != ms) {
 				Method m = (Method) ms[0];
-				boolean verify = (boolean) ms[1];
-				execCall(m, verify, context, req, resp);
-				// 已处理，直接返回
-				return;
-			}
-			// 再处理GET
-			ms = getMethods.get(node);
-			if (null != ms) {
-				Method m = (Method) ms[0];
-				boolean verify = (boolean) ms[1];
-				execGet(m, req, resp, context);
-				// 已处理，直接返回
-				return;
+				byte t = (byte) ms[1];
+				boolean verify = (boolean) ms[2];
+
+				if (t == TYPE_GET) {
+					execGet(m, context, req, resp);
+				} else if (t == TYPE_POST) {
+					execPost(m, context, req, resp);
+				} else if (t == TYPE_GETAPI) {
+					execGetAPI(m, verify, context, req, resp);
+				} else if (t == TYPE_POSTAPI) {
+					execPostAPI(m, verify, context, req, resp);
+				} else {
+					// 返回404错误
+					resp.setStatusCode(404);
+					resp.setStatusMessage("missing controller method");
+				}
 			}
 		} else {
 			// 返回404错误
 			resp.setStatusCode(404);
 			resp.setStatusMessage("missing controller method");
-			return;
 		}
 
 	}
 
-	private void execCall(Method m, boolean verify, RoutingContext context, HttpServerRequest req,
+	private void execGet(Method m, RoutingContext context, HttpServerRequest req, HttpServerResponse resp)
+			throws IOException {
+		try {
+			HttpMethod reqMethod = req.method();
+			if (reqMethod.equals(HttpMethod.GET)) {
+				m.invoke(this, context, req, resp);
+			} else {
+				// 不是GET方法
+				resp.setStatusCode(500);
+				resp.setStatusMessage("must be HTTP GET method");
+			}
+		} catch (InvocationTargetException ite) {
+			// 反射的代理异常，剥壳后才是真实的异常
+			String targetException = ite.getTargetException().getMessage();
+			resp.setStatusCode(500);
+			resp.setStatusMessage(targetException);
+			ite.printStackTrace();
+		} catch (Exception e) {
+			String targetException = e.getMessage();
+			resp.setStatusCode(500);
+			resp.setStatusMessage(targetException);
+			e.printStackTrace();
+		}
+	}
+
+	private void execPost(Method m, RoutingContext context, HttpServerRequest req, HttpServerResponse resp)
+			throws IOException {
+		try {
+			HttpMethod reqMethod = req.method();
+			if (reqMethod.equals(HttpMethod.POST)) {
+				m.invoke(this, context, req, resp);
+			} else {
+				// 不是POST方法
+				resp.setStatusCode(500);
+				resp.setStatusMessage("must be HTTP POST method");
+			}
+		} catch (InvocationTargetException ite) {
+			// 反射的代理异常，剥壳后才是真实的异常
+			String targetException = ite.getTargetException().getMessage();
+			log.debug("execPost299>>>{}", targetException);
+			resp.setStatusCode(500);
+			resp.setStatusMessage(targetException);
+		} catch (Exception e) {
+			String targetException = e.getMessage();
+			resp.setStatusCode(500);
+			resp.setStatusMessage(targetException);
+		}
+	}
+
+	private void execGetAPI(Method m, boolean verify, RoutingContext context, HttpServerRequest req,
 			HttpServerResponse resp) throws IOException {
 		try {
 			HttpMethod reqMethod = req.method();
-			String strRequest = null;
 			if (reqMethod.equals(HttpMethod.GET)) {
-				// GET方法的内容在url里
-				// 获取GET方法的req参数
+				// GET方法的内容在url里，获取GET方法的req参数
 				// 无需进行urlDecode
-				strRequest = req.getParam("req");
-			} else {
-				// 其它方法都按POST处理，认为内容在body里
-				strRequest = context.getBodyAsString(CodecUtils.ENCODING_UTF8);
-				System.out.println(strRequest);
-			}
+				String strRequest = req.getParam("req");
 
-			if (StringUtils.isNotBlank(strRequest)) {
-				APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
-				if (verify) {
-					String id = jsonRequest.id;
-					String v = jsonRequest.v;
+				if (StringUtils.isNotBlank(strRequest)) {
+					APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
+					if (verify) {
+						String id = jsonRequest.id;
+						String v = jsonRequest.v;
 
-					// getsession，使用token验证，然后跟v对比
+						// getsession，使用token验证，然后跟v对比
 
-					// 暂时不验证，直接通过
+						// 暂时不验证，直接通过
 
-					APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-					doResponseSuccess(resp, jsonResponse);
+						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+						doResponseSuccess(resp, jsonResponse);
+					} else {
+						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+						doResponseSuccess(resp, jsonResponse);
+					}
 				} else {
-					APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
-					doResponseSuccess(resp, jsonResponse);
+					doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
 				}
 			} else {
-				doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
+				// 不是GET方法，抛异常
+				doResponseFailure(resp, BaseRC.METHOD_NOT_FOUND, "");
 			}
+		} catch (InvocationTargetException ite) {
+			// 反射的代理异常，剥壳后才是真实的异常
+			Throwable targetException = ite.getTargetException();
+			dealException(resp, targetException);
+		} catch (Exception e) {
+			e.printStackTrace();
+			dealException(resp, e);
+		}
+	}
 
-			// 如果调用出现异常，则按服务端规范，将错误信息按APIResponse格式进行返回
+	private void execPostAPI(Method m, boolean verify, RoutingContext context, HttpServerRequest req,
+			HttpServerResponse resp) throws IOException {
+		try {
+			HttpMethod reqMethod = req.method();
+			if (reqMethod.equals(HttpMethod.POST)) {
+				String strRequest = context.getBodyAsString(CodecUtils.ENCODING_UTF8);
+
+				if (StringUtils.isNotBlank(strRequest)) {
+					APIRequest jsonRequest = JSON.parseObject(strRequest, APIRequest.class);
+					if (verify) {
+						String id = jsonRequest.id;
+						String v = jsonRequest.v;
+
+						// getsession，使用token验证，然后跟v对比
+
+						// 暂时不验证，直接通过
+
+						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+						doResponseSuccess(resp, jsonResponse);
+					} else {
+						APIResponse jsonResponse = (APIResponse) m.invoke(this, jsonRequest);
+						doResponseSuccess(resp, jsonResponse);
+					}
+				} else {
+					doResponseFailure(resp, BaseRC.EMPTY_REQUEST, "");
+				}
+			} else {
+				// 不是POST方法，抛异常
+				doResponseFailure(resp, BaseRC.METHOD_NOT_FOUND, "");
+			}
 		} catch (InvocationTargetException ite) {
 			// 反射的代理异常，剥壳后才是真实的异常
 			Throwable targetException = ite.getTargetException();
@@ -225,41 +338,6 @@ public abstract class Controller {
 		}
 	}
 
-	private void execGet(Method m, HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws IOException {
-		try {
-			m.invoke(this, req, resp, context);
-			// 如果调用出现异常，则按HTTP规范直接返回异常信息
-		} catch (InvocationTargetException ite) {
-			// 反射的代理异常，剥壳后才是真实的异常
-			String targetException = ite.getTargetException().getMessage();
-			resp.setStatusCode(500);
-			resp.setStatusMessage(targetException);
-			ite.printStackTrace();
-		} catch (Exception e) {
-			String targetException = e.getMessage();
-			resp.setStatusCode(500);
-			resp.setStatusMessage(targetException);
-			e.printStackTrace();
-		}
-	}
-
-	private void execPost(Method m, HttpServerRequest req, HttpServerResponse resp) throws IOException {
-		try {
-			m.invoke(this, req, resp);
-			// 如果调用出现异常，则按HTTP规范直接返回异常信息
-		} catch (InvocationTargetException ite) {
-			// 反射的代理异常，剥壳后才是真实的异常
-			String targetException = ite.getTargetException().getMessage();
-			log.debug("execPost299>>>{}", targetException);
-			resp.setStatusCode(500);
-			resp.setStatusMessage(targetException);
-		} catch (Exception e) {
-			String targetException = e.getMessage();
-			resp.setStatusCode(500);
-			resp.setStatusMessage(targetException);
-		}
-	}
-
 	private static void doResponseSuccess(HttpServerResponse resp, APIResponse response) throws IOException {
 		resp.setStatusCode(200);
 		writeThings(resp, JSON.toJSONString(response));
@@ -270,7 +348,7 @@ public abstract class Controller {
 		writeThings(resp, JSON.toJSONString(APIResponse.getNewFailureResp(rc, content)));
 	}
 
-	private static void writeThings(HttpServerResponse resp, String content) {
+	protected static void writeThings(HttpServerResponse resp, String content) {
 		resp.setStatusCode(200);
 		int len = content.getBytes(CodecUtils.CHARSET_UTF8).length;
 		resp.putHeader("Content-Length", Integer.toString(len));

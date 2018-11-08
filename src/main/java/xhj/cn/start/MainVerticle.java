@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.topoints.core.controller.UserController;
 import cn.topoints.utils.CodecUtils;
 import cn.topoints.utils.api.http.Controller;
 import cn.topoints.utils.data.DataSourceUtils;
@@ -22,9 +21,12 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+<<<<<<< HEAD
 import xhj.cn.custom.controller.HttpTestController;
 import xhj.cn.custom.controller.WxEventController;
 import xhj.cn.start.controller.StoreController;
+=======
+>>>>>>> origin/master
 import xhj.cn.start.controller.TestController;
 
 public class MainVerticle extends AbstractVerticle {
@@ -37,17 +39,23 @@ public class MainVerticle extends AbstractVerticle {
 
 		ctrlMap = new HashMap<>();
 
-		//putCtrlInMap(ctrlMap, TestController.getInstance("test"));
+		putCtrlInMap(ctrlMap, TestController.getInstance("test"));
 
-		//putCtrlInMap(ctrlMap, StoreController.getInstance("store"));
+		// putCtrlInMap(ctrlMap, StoreController.getInstance("store"));
 
 		DataSourceUtils.initDataSourceConfig();
 
+<<<<<<< HEAD
 		//putCtrlInMap(ctrlMap, UserController.getInstance("user"));
 		
 		putCtrlInMap(ctrlMap, WxEventController.getInstance("wx"));
 		
 		putCtrlInMap(ctrlMap, HttpTestController.getInstance("test"));
+=======
+		// putCtrlInMap(ctrlMap, UserController.getInstance("user"));
+
+		// putCtrlInMap(ctrlMap, WxEventController.getInstance("wx"));
+>>>>>>> origin/master
 
 	}
 
@@ -84,9 +92,9 @@ public class MainVerticle extends AbstractVerticle {
 		router.route().handler(BodyHandler.create());
 
 		// 处理一个post方法的rest接口
-		router.post("/start/*").handler(this::handlePost);
+		router.post("/*").handler(this::handleHttpRequest);
 		// 处理一个get方法的rest接口
-		router.get("/start/*").handler(this::handleGet);
+		router.get("/*").handler(this::handleHttpRequest);
 
 		httpServer.requestHandler(router::accept);
 		httpServer.listen(8080, res -> {
@@ -100,29 +108,19 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 
-	private void handlePost(RoutingContext context) {
+	private void handleHttpRequest(RoutingContext context) {
 		HttpServerRequest req = context.request();
 		HttpServerResponse resp = context.response();
 
-		resp.putHeader("content-type", "application/json;charset=UTF-8");
-		resp.putHeader("Access-Control-Allow-Origin", "*");
-		exec(context, req, resp);
-		resp.end();
-	}
-
-	// 逻辑同post方法
-	private void handleGet(RoutingContext context) {
-
-		HttpServerRequest req = context.request();
-		HttpServerResponse resp = context.response();
+		System.out.println("handleHttpRequest");
 
 		resp.putHeader("content-type", "application/json;charset=UTF-8");
 		resp.putHeader("Access-Control-Allow-Origin", "*");// 设置跨域，目前不限制。TODO，将来需要设定指定的来源
+
 		exec(context, req, resp);
 		resp.end();
 	}
 
-	@SuppressWarnings("unused")
 	private void putCtrlInMap(Map<String, Controller> map, Controller ctrl) {
 		map.put(ctrl.getNode(), ctrl);
 	}
@@ -137,15 +135,14 @@ public class MainVerticle extends AbstractVerticle {
 	private void exec(RoutingContext context, HttpServerRequest req, HttpServerResponse resp) {
 		String requestURI = req.path();
 
-		System.out.println(req.method());
-		System.out.println(req.path());
+		System.out.println(StringUtils.join(req.method(), " - ", req.path()));
 
 		String[] nodes = uri2Nodes(requestURI);
 
 		if (null != nodes && nodes.length > 1) {
 			String node = nodes[1];
 			if (node.equals("list")) {
-				// list被用于展示接口
+				// list被用于展示接口摘要
 				writeThings(resp, JSON.toJSONString(ctrlMap, true));
 			} else {
 				Controller ctrl = ctrlMap.get(node);

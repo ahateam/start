@@ -51,8 +51,19 @@ public class WxEventController extends Controller {
 	private WxEventController(String node) {
 		super(node);
 		try {
+<<<<<<< HEAD
 			wxDataService = WxDataService.getInstance();
 			wxFuncService = WxFuncService.getInstance();
+=======
+			// 微信参数配置
+			wxMpConfigStorage = new WxMpInMemoryConfigStorage();
+			wxMpConfigStorage.setAppId("wx9aaf23b05328a771"); // APPid
+			wxMpConfigStorage.setSecret("6b72b49c33db086d6f62931f94e9ee1b"); // AppSecret
+			wxMpConfigStorage.setToken("wx3ch"); // 设置微信公众号的token
+			wxMpConfigStorage.setAesKey("6tLn50b5o97PhgdiVb5Ek0780VLx6yG97eiKTE9waxZ"); // 设置微信公众号的EncodingAESKey
+			wxMpService = new WxMpServiceImpl();
+			wxMpService.setWxMpConfigStorage(wxMpConfigStorage);
+>>>>>>> origin/master
 
 			/**
 			 * 关注事件
@@ -61,7 +72,10 @@ public class WxEventController extends Controller {
 				@Override
 				public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context,
 						WxMpService wxMpService, WxSessionManager sessionManager) {
+<<<<<<< HEAD
 					System.err.println("场景值:  "+wxMessage.getEventKey().substring(8));
+=======
+>>>>>>> origin/master
 					WxMpXmlOutTextMessage m = WxMpXmlOutMessage.TEXT().content("欢迎关注！！！")
 							.fromUser(wxMessage.getToUser()).toUser(wxMessage.getFromUser()).build();
 					return m;
@@ -81,6 +95,7 @@ public class WxEventController extends Controller {
 				}
 			};
 
+<<<<<<< HEAD
 			/*
 			 * test卡券领取
 			 */
@@ -125,6 +140,14 @@ public class WxEventController extends Controller {
 
 					.rule().async(false).msgType(WxConsts.XmlMsgType.EVENT)
 					.event(WxConsts.EventType.CARD_USER_CONSUME_CARD).handler(consumeHandler).end();
+=======
+			// 路由器配置
+			wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
+			wxMpMessageRouter.rule().async(false).msgType(WxConsts.XmlMsgType.EVENT).event(WxConsts.EventType.SUBSCRIBE)
+					.eventKey("").handler(handler).end()
+
+					.rule().async(false).msgType(WxConsts.XmlMsgType.TEXT).content("test").handler(testHander).end();
+>>>>>>> origin/master
 
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -132,12 +155,18 @@ public class WxEventController extends Controller {
 	}
 
 	// 微信监听入口
-	@doGet(paths = "monitorEvent")
+	@GET(path = "monitorEvent")
 	public void monitorEvent(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) {
 		System.err.println("testIn");
 
 		String strRet = "failure";
 		try {
+<<<<<<< HEAD
+=======
+
+			WxMenu wxMenu = new WxMenu();
+
+>>>>>>> origin/master
 			// 微信加密签名
 			String signature = req.getParam("signature");
 			// 时间戳
@@ -190,4 +219,33 @@ public class WxEventController extends Controller {
 		resp.write(str);
 	}
 
+<<<<<<< HEAD
+=======
+	/*
+	 * 网页授权
+	 */
+	@GET(path = "wxTest1")
+	public APIResponse test(HttpServerRequest req, HttpServerResponse resp) {
+		System.err.println("testGo");
+		String url = "";
+		String url2 = wxMpService.oauth2buildAuthorizationUrl(url, WxConsts.OAuth2Scope.SNSAPI_USERINFO, null);
+		System.err.println(url2);
+		return APIResponse.getNewSuccessResp(url2);
+	}
+
+	/*
+	 * 根据用户反馈授权获取对应token
+	 */
+	@GET(path = "wxTest2")
+	public APIResponse getAccessToken(HttpServerRequest req, HttpServerResponse resp) throws Exception {
+		System.err.println("test2Go");
+		String code = req.getParam("code");
+		System.err.println(code);
+		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
+		WxMpUser wxMpUser = wxMpService.oauth2getUserInfo(wxMpOAuth2AccessToken, null);
+		System.err.println(wxMpUser.getOpenId());
+		return APIResponse.getNewSuccessResp("success");
+	}
+
+>>>>>>> origin/master
 }

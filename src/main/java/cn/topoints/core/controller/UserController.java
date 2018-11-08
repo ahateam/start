@@ -59,7 +59,7 @@ public class UserController extends Controller {
 	 *            用户编号
 	 * @return 用户对象（部分信息应该抹掉，或者不查询出来，例如pwd，现在偷懒简单做的）
 	 */
-	@doCall(paths = "getUserById")
+	@POSTAPI(path = "getUserById")
 	public APIResponse getUserById(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 
@@ -105,7 +105,7 @@ public class UserController extends Controller {
 	 * 
 	 * @return LoginBO 业务对象，包含用户session等相关
 	 */
-	@doCall(paths = "registByNameAndPwd")
+	@POSTAPI(path = "registByNameAndPwd")
 	public APIResponse registByNameAndPwd(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 
@@ -135,7 +135,7 @@ public class UserController extends Controller {
 	 *            密码（目前明文传递，将来需要加密传递 ）
 	 * @return LoginBO 业务对象，包含用户session等相关
 	 */
-	@doCall(paths = "loginByNameAndPwd")
+	@POSTAPI(path = "loginByNameAndPwd")
 	public APIResponse loginByNameAndPwd(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long appId = Param.getLong(c, "appId");
@@ -160,7 +160,7 @@ public class UserController extends Controller {
 	 *            应用编号（不同应用的用户名可能不唯一，因此需要填appId）
 	 * @return LoginBO 业务对象，包含用户session等相关
 	 */
-	@doCall(paths = "loginByAnonymous")
+	@POSTAPI(path = "loginByAnonymous")
 	public APIResponse loginByAnonymous(APIRequest req) throws Exception {
 		JSONObject c = Param.getReqContent(req);
 		Long appId = Param.getLong(c, "appId");
