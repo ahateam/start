@@ -62,7 +62,7 @@ public class HttpTestController extends Controller {
 	/*
 	 * 获取用户列表（test）
 	 */
-	@doGet(paths = "getTest")
+	@GET(path = "getTest")
 	public void getTest(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 		WxMpUserList wxUserList = wxMpService.getUserService().userList(null);
 		ret(resp, wxUserList.toString());
@@ -87,7 +87,7 @@ public class HttpTestController extends Controller {
 	 * @param context
 	 * @throws Exception
 	 */
-	@doGet(paths = "getTest2")
+	@GET(path = "getTest2")
 	public void getTest2(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<String> list = new ArrayList<String>();
@@ -111,7 +111,7 @@ public class HttpTestController extends Controller {
 	 * @param context
 	 * @throws WxErrorException
 	 */
-	@doGet(paths = "getTest3")
+	@GET(path = "getTest3")
 	public void getTest3(HttpServerRequest req, HttpServerResponse resp, RoutingContext context)
 			throws WxErrorException {
 		WxMpCardQrcodeCreateResult card = wxMpService.getCardService().createQrcodeCard("pu_IQ1WJyDNTTcnd6Z53H3eMFNvI",
@@ -126,7 +126,7 @@ public class HttpTestController extends Controller {
 	 * @param context
 	 * @throws WxErrorException
 	 */
-	@doGet(paths = "getTest4")
+	@GET(path = "getTest4")
 	public void getTest4(HttpServerRequest req, HttpServerResponse resp, RoutingContext context)
 			throws WxErrorException {
 		String detail = wxMpService.getCardService().getCardDetail("pu_IQ1WJyDNTTcnd6Z53H3eMFNvI");
@@ -140,7 +140,7 @@ public class HttpTestController extends Controller {
 	 * @param context
 	 * @throws WxErrorException
 	 */
-	@doGet(paths = "getTest5")
+	@GET(path = "getTest5")
 	public void getTest5(HttpServerRequest req, HttpServerResponse resp, RoutingContext context)
 			throws WxErrorException {
 		List<WxMpStoreInfo> list = wxMpService.getStoreService().listAll();

@@ -13,11 +13,8 @@ import cn.topoints.utils.api.http.Controller;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
-import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
-import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.bean.result.WxMpUserList;
@@ -51,7 +48,10 @@ public class WxOAuth2Controller extends Controller {
 		}
 	}
 
-	@doGet(paths = "addMenu")
+	/*
+	 * 添加子菜单test
+	 */
+	@GET(path = "addMenu")
 	public void getTest(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 //		WxMpUserList wxUserList = wxMpService.getUserService().userList(null);
 //		ret(resp, wxUserList.toString());
@@ -73,7 +73,7 @@ public class WxOAuth2Controller extends Controller {
 	/*
 	 * 消息群发
 	 */
-	@doGet(paths = "messageToMany")
+	@GET(path = "messageToMany")
 	public void messageToMany(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 		WxMpUserList userList = wxFuncService.getTest(wxDataService.getWxMpService());
 		wxFuncService.messageToMany(wxDataService.getWxMpService(), userList.getOpenids());
@@ -82,7 +82,7 @@ public class WxOAuth2Controller extends Controller {
 	/*
 	 * 模板消息发送测试
 	 */
-	@doGet(paths = "templateMessage")
+	@GET(path = "templateMessage")
 	public void templateMessage(HttpServerRequest req, HttpServerResponse resp, RoutingContext context)
 			throws Exception {
 		wxFuncService.templateMessageTest(wxDataService.getWxMpService());
@@ -99,7 +99,7 @@ public class WxOAuth2Controller extends Controller {
 	/*
 	 * 根据用户反馈授权获取对应token
 	 */
-	@doGet(paths = "getAccessToken")
+	@GET(path = "getAccessToken")
 	public void getAccessToken(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 		System.err.println("test：    get assesstoken");
 		String code = req.getParam("code");
@@ -112,7 +112,7 @@ public class WxOAuth2Controller extends Controller {
 	/*
 	 * 获取二维码
 	 */
-	@doGet(paths = "getTicket")
+	@GET(path = "getTicket")
 	public APIResponse getTicket(HttpServerRequest req, HttpServerResponse resp, RoutingContext context) throws Exception {
 		File ticket = wxFuncService.getTicket(wxDataService.getWxMpService(), "123456");
 		return APIResponse.getNewSuccessResp(ticket);

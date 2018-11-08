@@ -21,12 +21,9 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-<<<<<<< HEAD
 import xhj.cn.custom.controller.HttpTestController;
 import xhj.cn.custom.controller.WxEventController;
 import xhj.cn.start.controller.StoreController;
-=======
->>>>>>> origin/master
 import xhj.cn.start.controller.TestController;
 
 public class MainVerticle extends AbstractVerticle {
@@ -44,18 +41,10 @@ public class MainVerticle extends AbstractVerticle {
 		// putCtrlInMap(ctrlMap, StoreController.getInstance("store"));
 
 		DataSourceUtils.initDataSourceConfig();
-
-<<<<<<< HEAD
-		//putCtrlInMap(ctrlMap, UserController.getInstance("user"));
 		
 		putCtrlInMap(ctrlMap, WxEventController.getInstance("wx"));
 		
 		putCtrlInMap(ctrlMap, HttpTestController.getInstance("test"));
-=======
-		// putCtrlInMap(ctrlMap, UserController.getInstance("user"));
-
-		// putCtrlInMap(ctrlMap, WxEventController.getInstance("wx"));
->>>>>>> origin/master
 
 	}
 
